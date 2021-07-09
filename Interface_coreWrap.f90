@@ -1,6 +1,7 @@
 PROGRAM Interface_core
 
   USE realtype_rd,  ONLY: RealK
+  Use, intrinsic :: ISO_C_BINDING
   USE socrates_bones
   USE socrates_cloud_gen
   USE socrates_runes
@@ -53,20 +54,20 @@ INTERFACE
 
   Logical (C_CHAR), intent(in), optional :: l_cos_zen_correction
   !   Apply simple solar zenith angle correction
-  real(RealK) (C_INT), intent(in), optional :: cos_zen_rts(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: cos_zen_rts(n_profile)
   !   Mean cosine of solar zenith angle over lit fraction of radiation timestep
-  real(RealK) (C_INT), intent(in), optional :: lit_frac_rts(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: lit_frac_rts(n_profile)
   !   Lit fraction of radiation timestep
-  real(RealK) (C_INT), intent(in), optional :: cos_zen_mts(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: cos_zen_mts(n_profile)
   !   Mean cosine of solar zenith angle over lit fraction of model timestep
-  real(RealK) (C_INT), intent(in), optional :: lit_frac_mts(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: lit_frac_mts(n_profile)
   !   Lit fraction of model timestep
 
   Logical (C_CHAR), intent(in), optional :: l_grey_emis_correction
   !   Apply surface temperature correction with grey emissivity per tile
-  real(RealK) (C_INT), intent(in), optional :: grey_albedo_tile(:, :)
+  real(RealK) (C_DOUBLE), intent(in), optional :: grey_albedo_tile(:, :)
   !   Grey albedo of tiles (n_profile, n_tile)
-  real(RealK) (C_INT), intent(in), optional :: t_tile(:, :)
+  real(RealK) (C_DOUBLE), intent(in), optional :: t_tile(:, :)
   !   Tile temperatures (n_profile, n_tile)
 
   Logical (C_CHAR), intent(in), optional :: l_debug
@@ -74,59 +75,59 @@ INTERFACE
   !   Options for outputting debugging information
 
   ! Input radiation timestep fields:
-  real(RealK) (C_INT), intent(in), optional :: flux_direct_rts(n_profile, 0:n_layer)
-  real(RealK) (C_INT), intent(in), optional :: flux_direct_1d_rts(0:n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_direct_rts(n_profile, 0:n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_direct_1d_rts(0:n_layer)
   !   Direct (unscattered) downwards flux (Wm-2)
-  real(RealK) (C_INT), intent(in), optional :: flux_down_rts(n_profile, 0:n_layer)
-  real(RealK) (C_INT), intent(in), optional :: flux_down_1d_rts(0:n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_down_rts(n_profile, 0:n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_down_1d_rts(0:n_layer)
   !   Downwards flux (Wm-2)
-  real(RealK) (C_INT), intent(in), optional :: flux_up_rts(n_profile, 0:n_layer)
-  real(RealK) (C_INT), intent(in), optional :: flux_up_1d_rts(0:n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_up_rts(n_profile, 0:n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_up_1d_rts(0:n_layer)
   !   Upwards flux (Wm-2)
-  real(RealK) (C_INT), intent(in), optional :: heating_rate_rts(n_profile, n_layer)
-  real(RealK) (C_INT), intent(in), optional :: heating_rate_1d_rts(n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: heating_rate_rts(n_profile, n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: heating_rate_1d_rts(n_layer)
   !   Heating rate (Ks-1)
-  real(RealK) (C_INT), intent(in), optional :: flux_up_tile_rts(:, :)
-  real(RealK) (C_INT), intent(in), optional :: flux_up_tile_1d_rts(:)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_up_tile_rts(:, :)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_up_tile_1d_rts(:)
   !   Upwards flux on tiles (Wm-2) (n_profile, n_tile) and (n_tile)
-  real(RealK) (C_INT), intent(in), optional :: flux_up_blue_tile_rts(:, :)
-  real(RealK) (C_INT), intent(in), optional :: flux_up_blue_tile_1d_rts(:)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_up_blue_tile_rts(:, :)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_up_blue_tile_1d_rts(:)
   !   Upwards blue flux on tiles (Wm-2)
-  real(RealK) (C_INT), intent(in), optional :: flux_direct_surf_rts(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_direct_surf_rts(n_profile)
   !   Direct flux at the surface
-  real(RealK) (C_INT), intent(in), optional :: flux_down_surf_rts(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_down_surf_rts(n_profile)
   !   Total downward flux at the surface
-  real(RealK) (C_INT), intent(in), optional :: flux_direct_blue_surf_rts(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_direct_blue_surf_rts(n_profile)
   !   Direct blue flux at the surface
-  real(RealK) (C_INT), intent(in), optional :: flux_down_blue_surf_rts(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: flux_down_blue_surf_rts(n_profile)
   !   Total downward blue flux at the surface
 
   ! Output model timestep fields:
-  real(RealK) (C_INT), intent(out), optional :: flux_direct_mts(n_profile, 0:n_layer)
-  real(RealK) (C_INT), intent(out), optional :: flux_direct_1d_mts(0:n_layer)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_direct_mts(n_profile, 0:n_layer)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_direct_1d_mts(0:n_layer)
   !   Direct (unscattered) downwards flux (Wm-2)
-  real(RealK) (C_INT), intent(out), optional :: flux_down_mts(n_profile, 0:n_layer)
-  real(RealK) (C_INT), intent(out), optional :: flux_down_1d_mts(0:n_layer)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_down_mts(n_profile, 0:n_layer)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_down_1d_mts(0:n_layer)
   !   Downwards flux (Wm-2)
-  real(RealK) (C_INT), intent(out), optional :: flux_up_mts(n_profile, 0:n_layer)
-  real(RealK) (C_INT), intent(out), optional :: flux_up_1d_mts(0:n_layer)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_up_mts(n_profile, 0:n_layer)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_up_1d_mts(0:n_layer)
   !   Upwards flux (Wm-2)
-  real(RealK) (C_INT), intent(out), optional :: heating_rate_mts(n_profile, n_layer)
-  real(RealK) (C_INT), intent(out), optional :: heating_rate_1d_mts(n_layer)
+  real(RealK) (C_DOUBLE), intent(out), optional :: heating_rate_mts(n_profile, n_layer)
+  real(RealK) (C_DOUBLE), intent(out), optional :: heating_rate_1d_mts(n_layer)
   !   Heating rate (Ks-1)
-  real(RealK) (C_INT), intent(out), optional :: flux_up_tile_mts(:, :)
-  real(RealK) (C_INT), intent(out), optional :: flux_up_tile_1d_mts(:)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_up_tile_mts(:, :)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_up_tile_1d_mts(:)
   !   Upwards flux on tiles (Wm-2) (n_profile, n_tile) and (n_tile)
-  real(RealK) (C_INT), intent(out), optional :: flux_up_blue_tile_mts(:, :)
-  real(RealK) (C_INT), intent(out), optional :: flux_up_blue_tile_1d_mts(:)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_up_blue_tile_mts(:, :)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_up_blue_tile_1d_mts(:)
   !   Upwards blue flux on tiles (Wm-2)
-  real(RealK) (C_INT), intent(out), optional :: flux_direct_surf_mts(n_profile)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_direct_surf_mts(n_profile)
   !   Direct flux at the surface
-  real(RealK) (C_INT), intent(out), optional :: flux_down_surf_mts(n_profile)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_down_surf_mts(n_profile)
   !   Total downward flux at the surface
-  real(RealK) (C_INT), intent(out), optional :: flux_direct_blue_surf_mts(n_profile)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_direct_blue_surf_mts(n_profile)
   !   Direct blue flux at the surface
-  real(RealK) (C_INT), intent(out), optional :: flux_down_blue_surf_mts(n_profile)
+  real(RealK) (C_DOUBLE), intent(out), optional :: flux_down_blue_surf_mts(n_profile)
   !   Total downward blue flux at the surface
 
   CALL subroutine bones(n_profile, n_layer, n_tile, &
@@ -177,7 +178,7 @@ INTERFACE
     ioverlap,            & ! Vertical overlap
     rand_seed(nd_profile)  ! Seed for generating random numbers
 
-   real(RealK) (C_INT), intent(in) :: &
+   real(RealK) (C_DOUBLE), intent(in) :: &
     zf(nd_profile, nd_layer), &
   !     Full-level (layer midpoint) pressure (Pa)
     avg_cf(nd_profile, cloud_top:nd_layer), &
@@ -200,7 +201,7 @@ INTERFACE
   Integer (C_INT), intent(out) :: n_subcol_cld(nd_profile)
   !     Number of cloudy sub-columns
 
-  real(RealK) (C_INT), intent(inout) :: c_sub(nd_profile, cloud_top:nd_layer, n_subcol)
+  real(RealK) (C_DOUBLE), intent(inout) :: c_sub(nd_profile, cloud_top:nd_layer, n_subcol)
   !     Sub-grid cloud water content
   
  CALL subroutine cloud_gen(nd_layer, cloud_top, n_layer, nd_profile, il1, il2, &
@@ -309,72 +310,72 @@ INTERFACE
   Integer (C_INT), intent(in), optional :: n_aer_mode
   !   Number of aerosol modes
 
-  real(RealK) (C_INT), intent(in), optional :: p_layer(n_profile, n_layer)
-  real(RealK) (C_INT), intent(in), optional :: p_layer_1d(n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: p_layer(n_profile, n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: p_layer_1d(n_layer)
   !   Pressure at layer centres
-  real(RealK) (C_INT), intent(in), optional :: t_layer(n_profile, n_layer)
-  real(RealK) (C_INT), intent(in), optional :: t_layer_1d(n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: t_layer(n_profile, n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: t_layer_1d(n_layer)
   !   Temperature at layer centres
-  real(RealK) (C_INT), intent(in), optional :: t_level(n_profile, 0:n_layer)
-  real(RealK) (C_INT), intent(in), optional :: t_level_1d(0:n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: t_level(n_profile, 0:n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: t_level_1d(0:n_layer)
   !   Temperature at layer boundaries
-  real(RealK) (C_INT), intent(in), optional :: mass(n_profile, n_layer)
-  real(RealK) (C_INT), intent(in), optional :: mass_1d(n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: mass(n_profile, n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: mass_1d(n_layer)
   !   Mass of layer (kg m-2)
-  real(RealK) (C_INT), intent(in), optional :: density(n_profile, n_layer)
-  real(RealK) (C_INT), intent(in), optional :: density_1d(n_layer)   
+  real(RealK) (C_DOUBLE), intent(in), optional :: density(n_profile, n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: density_1d(n_layer)   
   !   Density of layer (kg m-3)
-  real(RealK) (C_INT), intent(in), optional :: h2o(n_profile, n_layer)
-  real(RealK) (C_INT), intent(in), optional :: h2o_1d(n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: h2o(n_profile, n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: h2o_1d(n_layer)
   !   Mass mixing ratio of water vapour
-  real(RealK) (C_INT), intent(in), optional :: o3(n_profile, n_layer)
-  real(RealK) (C_INT), intent(in), optional :: o3_1d(n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: o3(n_profile, n_layer)
+  real(RealK) (C_DOUBLE), intent(in), optional :: o3_1d(n_layer)
   !   Mass mixing ratio of ozone
 
-  real(RealK) (C_INT), intent(in), optional :: &
+  real(RealK) (C_DOUBLE), intent(in), optional :: &
    co2_mix_ratio, n2o_mix_ratio, ch4_mix_ratio, &
    o2_mix_ratio, so2_mix_ratio, cfc11_mix_ratio, cfc12_mix_ratio, &
    cfc113_mix_ratio, hcfc22_mix_ratio, hfc134a_mix_ratio
   !   Trace gas mass mixing ratios
 
-  real(RealK) (C_INT), intent(in), optional :: t_ground(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: t_ground(n_profile)
   !   Effective radiative temperature over whole grid-box
-  real(RealK) (C_INT), intent(in), optional :: cos_zenith_angle(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: cos_zenith_angle(n_profile)
   !   Cosine of solar zenith angle
-  real(RealK) (C_INT), intent(in), optional :: solar_irrad(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: solar_irrad(n_profile)
   !   Solar irradiance at top-of-atmosphere (mean over timestep)
-  real(RealK) (C_INT), intent(in), optional :: orog_corr(n_profile)
+  real(RealK) (C_DOUBLE), intent(in), optional :: orog_corr(n_profile)
   !   Orographic correction factor
 
   Logical (C_CHAR), intent(in), optional :: l_grey_albedo
   !   Set a single grey albedo / emissivity for the surface
-  real(RealK) (C_INT), intent(in), optional :: grey_albedo
+  real(RealK) (C_DOUBLE), intent(in), optional :: grey_albedo
   !   Grey surface albedo
 
-  real(RealK) (C_INT) , intent(in), optional :: albedo_diff(:, :)
+  real(RealK) (C_DOUBLE) , intent(in), optional :: albedo_diff(:, :)
   !   Spectral diffuse albedo (n_profile, n_band)
-  real(RealK) (C_INT), intent(in), optional :: albedo_dir(:, :)
+  real(RealK) (C_DOUBLE), intent(in), optional :: albedo_dir(:, :)
   !   Spectral direct albedo (n_profile, n_band)
 
   Logical (C_CHAR), intent(in), optional :: l_tile
   !   Use tiled surface properties
-  real(RealK) (C_INT), intent(in), optional :: frac_tile(:, :)
+  real(RealK) (C_DOUBLE), intent(in), optional :: frac_tile(:, :)
   !   Tile fractions (n_profile, n_tile)
-  real(RealK) (C_INT), intent(in), optional :: albedo_diff_tile(:, :, :)
+  real(RealK) (C_DOUBLE), intent(in), optional :: albedo_diff_tile(:, :, :)
   !   Diffuse tile albedo (n_profile, n_tile, n_band)
-  real(RealK) (C_INT), intent(in), optional :: albedo_dir_tile(:, :, :)
+  real(RealK) (C_DOUBLE), intent(in), optional :: albedo_dir_tile(:, :, :)
   !   Direct tile albedo (n_profile, n_tile, n_band)
-  real(RealK) (C_INT), intent(in), optional :: t_tile(:, :)
+  real(RealK) (C_DOUBLE), intent(in), optional :: t_tile(:, :)
   !   Tile temperatures (n_profile, n_tile)
 
-  real(RealK) (C_INT), intent(in), dimension (n_profile, n_layer), optional :: &
+  real(RealK) (C_DOUBLE), intent(in), dimension (n_profile, n_layer), optional :: &
    cloud_frac, conv_frac, &
    liq_frac, ice_frac, liq_conv_frac, ice_conv_frac, &
    liq_mmr, ice_mmr, liq_conv_mmr, ice_conv_mmr, &
    liq_dim, ice_dim, liq_conv_dim, ice_conv_dim, &
    liq_rsd, ice_rsd, liq_conv_rsd, ice_conv_rsd, &
    liq_nc, liq_conv_nc
-  real(RealK) (C_INT), intent(in), dimension (n_layer), optional :: &
+  real(RealK) (C_DOUBLE), intent(in), dimension (n_layer), optional :: &
    cloud_frac_1d, conv_frac_1d, &
    liq_frac_1d, ice_frac_1d, liq_conv_frac_1d, ice_conv_frac_1d, &
    liq_mmr_1d, ice_mmr_1d, liq_conv_mmr_1d, ice_conv_mmr_1d, &
@@ -385,11 +386,11 @@ INTERFACE
   !   effective dimensions, relative standard deviation of condensate,
   !   and number concentration
 
-  real(RealK) (C_INT), intent(in), optional :: cloud_vertical_decorr
+  real(RealK) (C_DOUBLE), intent(in), optional :: cloud_vertical_decorr
   !   Decorrelation pressure scale for cloud vertical overlap
-  real(RealK) (C_INT), intent(in), optional :: conv_vertical_decorr
+  real(RealK) (C_DOUBLE), intent(in), optional :: conv_vertical_decorr
   !   Decorrelation pressure scale for convective cloud vertical overlap
-  real(RealK) (C_INT), intent(in), optional :: cloud_horizontal_rsd
+  real(RealK) (C_DOUBLE), intent(in), optional :: cloud_horizontal_rsd
   !   Relative standard deviation of sub-grid cloud condensate
 
   real(RealK) (C_DOUBLE), intent(in), optional :: layer_heat_capacity(n_profile, n_layer)
