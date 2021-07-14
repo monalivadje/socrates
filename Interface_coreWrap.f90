@@ -311,7 +311,7 @@ INTERFACE
   !   Number of aerosol modes
 
   real(C_DOUBLE), intent(in), optional :: p_layer(n_profile, n_layer)
-  real(RealK) (C_DOUBLE), intent(in), optional :: p_layer_1d(n_layer)
+  real(C_DOUBLE), intent(in), optional :: p_layer_1d(n_layer)
   !   Pressure at layer centres
   real(C_DOUBLE), intent(in), optional :: t_layer(n_profile, n_layer)
   real(C_DOUBLE), intent(in), optional :: t_layer_1d(n_layer)
