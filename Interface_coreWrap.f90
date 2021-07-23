@@ -1,7 +1,7 @@
 PROGRAM Interface_core
 
   USE realtype_rd,  ONLY: RealK
-  Use, intrinsic :: ISO_C_BINDING
+  Use, intrinsic :: ISO_C_BINDING, Only: C_INT,C_BOOL,C_DOUBLE
   USE socrates_bones
   USE socrates_cloud_gen
   USE socrates_runes
@@ -16,12 +16,14 @@ PROGRAM Interface_core
   USE socrates_set_dimen
   USE socrates_set_spectrum
   USE socrates_set_diag
+  USE Socrates_set_spectrum_wrap
 
 IMPLICIT NONE
 
 INTERFACE
 
- subroutine bones_wrap(n_profile, n_layer, n_tile, &
+
+subroutine bones_wrap(n_profile, n_layer, n_tile, &
   l_cos_zen_correction, cos_zen_rts, lit_frac_rts, cos_zen_mts, lit_frac_mts, &
   l_grey_emis_correction, grey_albedo_tile, t_tile, &
   l_debug, i_profile_debug, &
@@ -36,14 +38,14 @@ INTERFACE
   flux_direct_surf_mts, flux_down_surf_mts, &
   flux_direct_blue_surf_mts, flux_down_blue_surf_mts, &
   flux_direct_1d_mts, flux_down_1d_mts, flux_up_1d_mts, heating_rate_1d_mts, &
-  flux_up_tile_1d_mts, flux_up_blue_tile_1d_mts) BIND(C)
+  flux_up_tile_1d_mts, flux_up_blue_tile_1d_mts) BIND(C,name='bones')
 
 
-  Use, intrinsic :: ISO_C_BINDING
+  Use, intrinsic :: ISO_C_BINDING, only: C_INT, C_BOOL, C_DOUBLE, C_CHAR
   use realtype_rd, only: RealK
   use rad_ccf, only: stefan_boltzmann
 
-  
+  IMPLICIT NONE
 
   Integer(C_INT), intent(in) :: n_profile
   !   Number of columns to operate on
@@ -52,7 +54,7 @@ INTERFACE
   Integer(C_INT), intent(in), optional :: n_tile
   !   Number of surface tiles
 
-  Logical(C_BOOL), intent(in), optional :: l_cos_zen_correction
+  Logical(C_BOOL) , intent(in), optional :: l_cos_zen_correction
   !   Apply simple solar zenith angle correction
   real(C_DOUBLE), intent(in), optional :: cos_zen_rts(n_profile)
   !   Mean cosine of solar zenith angle over lit fraction of radiation timestep
@@ -63,7 +65,7 @@ INTERFACE
   real(C_DOUBLE), intent(in), optional :: lit_frac_mts(n_profile)
   !   Lit fraction of model timestep
 
-  Logical(C_BOOL), intent(in), optional :: l_grey_emis_correction
+  Logical (C_BOOL), intent(in), optional :: l_grey_emis_correction
   !   Apply surface temperature correction with grey emissivity per tile
   real (C_DOUBLE), intent(in), optional :: grey_albedo_tile(:, :)
   !   Grey albedo of tiles (n_profile, n_tile)
@@ -130,23 +132,24 @@ INTERFACE
   real(C_DOUBLE), intent(out), optional :: flux_down_blue_surf_mts(n_profile)
   !   Total downward blue flux at the surface
 
-  CALL bones(n_profile, n_layer, n_tile, &
-  l_cos_zen_correction, cos_zen_rts, lit_frac_rts, cos_zen_mts, lit_frac_mts, &
-  l_grey_emis_correction, grey_albedo_tile, t_tile, &
-  l_debug, i_profile_debug, &
-  flux_direct_rts, flux_down_rts, flux_up_rts, heating_rate_rts, &
-  flux_up_tile_rts, flux_up_blue_tile_rts, &
-  flux_direct_surf_rts, flux_down_surf_rts, &
-  flux_direct_blue_surf_rts, flux_down_blue_surf_rts, &
-  flux_direct_1d_rts, flux_down_1d_rts, flux_up_1d_rts, heating_rate_1d_rts, &
-  flux_up_tile_1d_rts, flux_up_blue_tile_1d_rts, &
-  flux_direct_mts, flux_down_mts, flux_up_mts, heating_rate_mts, &
-  flux_up_tile_mts, flux_up_blue_tile_mts, &
-  flux_direct_surf_mts, flux_down_surf_mts, &
-  flux_direct_blue_surf_mts, flux_down_blue_surf_mts, &
-  flux_direct_1d_mts, flux_down_1d_mts, flux_up_1d_mts, heating_rate_1d_mts, &
-  flux_up_tile_1d_mts, flux_up_blue_tile_1d_mts)
- 
+ ! call bones(n_profile, n_layer, n_tile, &
+ ! l_cos_zen_correction, cos_zen_rts, lit_frac_rts, cos_zen_mts, lit_frac_mts, &
+ ! l_grey_emis_correction, grey_albedo_tile, t_tile, &
+ ! l_debug, i_profile_debug, &
+ ! flux_direct_rts, flux_down_rts, flux_up_rts, heating_rate_rts, &
+ ! flux_up_tile_rts, flux_up_blue_tile_rts, &
+ ! flux_direct_surf_rts, flux_down_surf_rts, &
+ ! flux_direct_blue_surf_rts, flux_down_blue_surf_rts, &
+ ! flux_direct_1d_rts, flux_down_1d_rts, flux_up_1d_rts, heating_rate_1d_rts, &
+ ! flux_up_tile_1d_rts, flux_up_blue_tile_1d_rts, &
+ ! flux_direct_mts, flux_down_mts, flux_up_mts, heating_rate_mts, &
+ ! flux_up_tile_mts, flux_up_blue_tile_mts, &
+ ! flux_direct_surf_mts, flux_down_surf_mts, &
+ ! flux_direct_blue_surf_mts, flux_down_blue_surf_mts, &
+ ! flux_direct_1d_mts, flux_down_1d_mts, flux_up_1d_mts, heating_rate_1d_mts, &
+ ! flux_up_tile_1d_mts, flux_up_blue_tile_1d_mts) 
+
+
  end subroutine bones_wrap
 
  subroutine cloud_gen_wrap(nd_layer, cloud_top, n_layer, nd_profile, il1, il2, &
@@ -154,7 +157,7 @@ INTERFACE
                      ipph, ioverlap, rand_seed, &
                      rlc_cf, rlc_cw, sigma_qcw, avg_cf, &
                      c_cloud, c_ratio, zf, xcw, &
-                     n_subcol_cld, c_sub) BIND(C)
+                     n_subcol_cld, c_sub) 
 
    Use, intrinsic :: ISO_C_BINDING
    use realtype_rd, only: RealK
@@ -204,12 +207,14 @@ INTERFACE
   real(C_DOUBLE), intent(inout) :: c_sub(nd_profile, cloud_top:nd_layer, n_subcol)
   !     Sub-grid cloud water content
   
- CALL cloud_gen(nd_layer, cloud_top, n_layer, nd_profile, il1, il2, &
-                     n_subcol, n1, n2, &
-                     ipph, ioverlap, rand_seed, &
-                     rlc_cf, rlc_cw, sigma_qcw, avg_cf, &
-                     c_cloud, c_ratio, zf, xcw, &
-                     n_subcol_cld, c_sub)
+ 
+  !call cloud_gen_wrap(nd_layer, cloud_top, n_layer, nd_profile, il1, il2, &
+  !                   n_subcol, n1, n2, &
+  !                   ipph, ioverlap, rand_seed, &
+  !                   rlc_cf, rlc_cw, sigma_qcw, avg_cf, &
+  !                   c_cloud, c_ratio, zf, xcw, &
+  !                   n_subcol_cld, c_sub) 
+
 
  end subroutine cloud_gen_wrap
 
@@ -261,10 +266,10 @@ INTERFACE
   liq_incloud_mmr_diag_1d, ice_incloud_mmr_diag_1d, &
   liq_inconv_mmr_diag_1d, ice_inconv_mmr_diag_1d, &
   liq_dim_diag_1d, ice_dim_diag_1d, &
-  liq_conv_dim_diag_1d, ice_conv_dim_diag_1d) BIND(C)
+  liq_conv_dim_diag_1d, ice_conv_dim_diag_1d) !BIND(C)
 
 
-  Use, intrinsic :: ISO_C_BINDING  
+  Use, intrinsic :: ISO_C_BINDING , only : C_INT, C_DOUBLE, C_BOOL 
   use def_spectrum, only: StrSpecData
   use def_mcica,    only: StrMcica
   use def_control,  only: StrCtrl,  deallocate_control
@@ -347,7 +352,7 @@ INTERFACE
   real(C_DOUBLE), intent(in), optional :: orog_corr(n_profile)
   !   Orographic correction factor
 
-  Logical(C_BOOL), intent(in), optional :: l_grey_albedo
+  Logical (C_BOOL), intent(in), optional :: l_grey_albedo
   !   Set a single grey albedo / emissivity for the surface
   real(C_DOUBLE), intent(in), optional :: grey_albedo
   !   Grey surface albedo
@@ -357,7 +362,7 @@ INTERFACE
   real(C_DOUBLE), intent(in), optional :: albedo_dir(:, :)
   !   Spectral direct albedo (n_profile, n_band)
 
-  Logical(C_BOOL), intent(in), optional :: l_tile
+  Logical (C_BOOL), intent(in), optional :: l_tile
   !   Use tiled surface properties
   real(C_DOUBLE), intent(in), optional :: frac_tile(:, :)
   !   Tile fractions (n_profile, n_tile)
@@ -408,15 +413,13 @@ INTERFACE
 
   Logical (C_BOOL), intent(in), optional :: l_rayleigh
   !   Include Rayleigh scattering
-  Logical (C_BOOL), intent(in), optional :: l_mixing_ratio
+  Logical (C_BOOL) , intent(in), optional :: l_mixing_ratio
   !   Assume mass mixing ratios are with respect to dry mass
-  Logical (C_BOOL), intent(in), optional :: l_aerosol_mode
+  Logical , intent(in), optional :: l_aerosol_mode
   !   Include aerosol optical properties specified by mode
-
   Logical (C_BOOL), intent(in), optional :: l_invert
   !   Flag to invert fields in the vertical
-
-  Logical (C_BOOL), intent(in), optional :: l_debug
+  Logical (C_BOOL) , intent(in), optional :: l_debug
   integer, intent(in), optional :: i_profile_debug
   !   Options for outputting debugging information
 
@@ -503,62 +506,62 @@ INTERFACE
   character (len=errormessagelength) :: cmessage
   character(len=*), parameter :: RoutineName = 'RUNES'
 
-  CALL runes(n_profile, n_layer, spectrum, spectrum_name, mcica_data, &
-  n_cloud_layer, n_aer_mode, n_tile, &
-  p_layer, t_layer, t_level, mass, density, &
-  h2o, o3, &
-  p_layer_1d, t_layer_1d, t_level_1d, mass_1d, density_1d, &
-  h2o_1d, o3_1d, &
-  co2_mix_ratio, n2o_mix_ratio, ch4_mix_ratio, &
-  o2_mix_ratio, so2_mix_ratio, cfc11_mix_ratio, cfc12_mix_ratio, &
-  cfc113_mix_ratio, hcfc22_mix_ratio, hfc134a_mix_ratio, &
-  t_ground, cos_zenith_angle, solar_irrad, orog_corr, &
-  l_grey_albedo, grey_albedo, albedo_diff, albedo_dir, &
-  l_tile, frac_tile, t_tile, albedo_diff_tile, albedo_dir_tile, &
-  cloud_frac, conv_frac, &
-  liq_frac, ice_frac, liq_conv_frac, ice_conv_frac, &
-  liq_mmr, ice_mmr, liq_conv_mmr, ice_conv_mmr, &
-  liq_dim, ice_dim, liq_conv_dim, ice_conv_dim, &
-  liq_rsd, ice_rsd, liq_conv_rsd, ice_conv_rsd, &
-  liq_nc, liq_conv_nc, &
-  cloud_frac_1d, conv_frac_1d, &
-  liq_frac_1d, ice_frac_1d, liq_conv_frac_1d, ice_conv_frac_1d, &
-  liq_mmr_1d, ice_mmr_1d, liq_conv_mmr_1d, ice_conv_mmr_1d, &
-  liq_dim_1d, ice_dim_1d, liq_conv_dim_1d, ice_conv_dim_1d, &
-  liq_rsd_1d, ice_rsd_1d, liq_conv_rsd_1d, ice_conv_rsd_1d, &
-  liq_nc_1d, liq_conv_nc_1d, &
-  cloud_vertical_decorr, conv_vertical_decorr, &
-  cloud_horizontal_rsd, &
-  layer_heat_capacity, layer_heat_capacity_1d, &
-  i_source, i_cloud_representation, i_overlap, i_inhom, &
-  i_mcica_sampling, i_st_water, i_cnv_water, i_st_ice, i_cnv_ice, i_drop_re, &
-  rand_seed, &
-  l_rayleigh, l_mixing_ratio, l_aerosol_mode, &
-  l_invert, l_debug, i_profile_debug, &
-  flux_direct, flux_down, flux_up, heating_rate, &
-  flux_up_tile, flux_up_blue_tile, flux_direct_blue_surf, flux_down_blue_surf, &
-  flux_direct_1d, flux_down_1d, flux_up_1d, heating_rate_1d, &
-  flux_up_tile_1d, flux_up_blue_tile_1d, &
-  total_cloud_cover, total_cloud_fraction, total_cloud_fraction_1d, &
-  liq_frac_diag, ice_frac_diag, &
-  liq_conv_frac_diag, ice_conv_frac_diag, &
-  liq_incloud_mmr_diag, ice_incloud_mmr_diag, &
-  liq_inconv_mmr_diag, ice_inconv_mmr_diag, &
-  liq_dim_diag, ice_dim_diag, &
-  liq_conv_dim_diag, ice_conv_dim_diag, &
-  liq_frac_diag_1d, ice_frac_diag_1d, &
-  liq_conv_frac_diag_1d, ice_conv_frac_diag_1d, &
-  liq_incloud_mmr_diag_1d, ice_incloud_mmr_diag_1d, &
-  liq_inconv_mmr_diag_1d, ice_inconv_mmr_diag_1d, &
-  liq_dim_diag_1d, ice_dim_diag_1d, &
-  liq_conv_dim_diag_1d, ice_conv_dim_diag_1d)
+!  CALL runes(n_profile, n_layer, spectrum, spectrum_name, mcica_data, &
+ ! n_cloud_layer, n_aer_mode, n_tile, &
+ ! p_layer, t_layer, t_level, mass, density, &
+ ! h2o, o3, &
+ ! p_layer_1d, t_layer_1d, t_level_1d, mass_1d, density_1d, &
+ ! h2o_1d, o3_1d, &
+ ! co2_mix_ratio, n2o_mix_ratio, ch4_mix_ratio, &
+ ! o2_mix_ratio, so2_mix_ratio, cfc11_mix_ratio, cfc12_mix_ratio, &
+ ! cfc113_mix_ratio, hcfc22_mix_ratio, hfc134a_mix_ratio, &
+ ! t_ground, cos_zenith_angle, solar_irrad, orog_corr, &
+ ! l_grey_albedo, grey_albedo, albedo_diff, albedo_dir, &
+ ! l_tile, frac_tile, t_tile, albedo_diff_tile, albedo_dir_tile, &
+ ! cloud_frac, conv_frac, &
+ ! liq_frac, ice_frac, liq_conv_frac, ice_conv_frac, &
+ ! liq_mmr, ice_mmr, liq_conv_mmr, ice_conv_mmr, &
+ ! liq_dim, ice_dim, liq_conv_dim, ice_conv_dim, &
+ ! liq_rsd, ice_rsd, liq_conv_rsd, ice_conv_rsd, &
+ ! liq_nc, liq_conv_nc, &
+ ! cloud_frac_1d, conv_frac_1d, &
+ ! liq_frac_1d, ice_frac_1d, liq_conv_frac_1d, ice_conv_frac_1d, &
+ ! liq_mmr_1d, ice_mmr_1d, liq_conv_mmr_1d, ice_conv_mmr_1d, &
+ ! liq_dim_1d, ice_dim_1d, liq_conv_dim_1d, ice_conv_dim_1d, &
+ ! liq_rsd_1d, ice_rsd_1d, liq_conv_rsd_1d, ice_conv_rsd_1d, &
+ ! liq_nc_1d, liq_conv_nc_1d, &
+ ! cloud_vertical_decorr, conv_vertical_decorr, &
+ ! cloud_horizontal_rsd, &
+ ! layer_heat_capacity, layer_heat_capacity_1d, &
+ ! i_source, i_cloud_representation, i_overlap, i_inhom, &
+ ! i_mcica_sampling, i_st_water, i_cnv_water, i_st_ice, i_cnv_ice, i_drop_re, &
+ ! rand_seed, &
+ ! l_rayleigh, l_mixing_ratio, l_aerosol_mode, &
+ ! l_invert, l_debug, i_profile_debug, &
+ ! flux_direct, flux_down, flux_up, heating_rate, &
+ ! flux_up_tile, flux_up_blue_tile, flux_direct_blue_surf, flux_down_blue_surf, &
+ ! flux_direct_1d, flux_down_1d, flux_up_1d, heating_rate_1d, &
+ ! flux_up_tile_1d, flux_up_blue_tile_1d, &
+ ! total_cloud_cover, total_cloud_fraction, total_cloud_fraction_1d, &
+ ! liq_frac_diag, ice_frac_diag, &
+ ! liq_conv_frac_diag, ice_conv_frac_diag, &
+ ! liq_incloud_mmr_diag, ice_incloud_mmr_diag, &
+ ! liq_inconv_mmr_diag, ice_inconv_mmr_diag, &
+ ! liq_dim_diag, ice_dim_diag, &
+ ! liq_conv_dim_diag, ice_conv_dim_diag, &
+ ! liq_frac_diag_1d, ice_frac_diag_1d, &
+ ! liq_conv_frac_diag_1d, ice_conv_frac_diag_1d, &
+ ! liq_incloud_mmr_diag_1d, ice_incloud_mmr_diag_1d, &
+ ! liq_inconv_mmr_diag_1d, ice_inconv_mmr_diag_1d, &
+ ! liq_dim_diag_1d, ice_dim_diag_1d, &
+!  liq_conv_dim_diag_1d, ice_conv_dim_diag_1d) 
 
 
-end subroutine runes_wrap
+ end subroutine runes_wrap
  
  subroutine set_aer_wrap(aer, control, dimen, spectrum, &
   n_profile, n_layer, n_aer_mode, &
-  aer_mix_ratio, aer_absorption, aer_scattering, aer_asymmetry) BIND(C)
+  aer_mix_ratio, aer_absorption, aer_scattering, aer_asymmetry) !BIND(C,name='set_aer')
 
   Use, intrinsic :: ISO_C_BINDING 
   use def_aer,      only: StrAer, allocate_aer, allocate_aer_prsc
@@ -597,10 +600,6 @@ end subroutine runes_wrap
   real(C_DOUBLE), intent(in), optional :: aer_asymmetry(:, :, :, :)
   !   Aerosol asymmetry (n_profile, n_layer, n_mode, n_band)
 
-  CALL set_aer(aer, control, dimen, spectrum, &
-   n_profile, n_layer, n_aer_mode, &
-   aer_mix_ratio, aer_absorption, aer_scattering, aer_asymmetry)
-
 
  end subroutine set_aer_wrap
 
@@ -618,17 +617,18 @@ end subroutine runes_wrap
   l_ch4_well_mixed, l_o2_well_mixed, l_so2_well_mixed, l_n2_well_mixed, &
   l_cfc11_well_mixed, l_cfc12_well_mixed, l_cfc113_well_mixed, &
   l_hcfc22_well_mixed, l_hfc134a_well_mixed, &
-  l_invert, l_debug, i_profile_debug) BIND(C)
+  l_invert, l_debug, i_profile_debug) !BIND(C,name='set_atm')
 
- Use, intrinsic :: ISO_C_BINDING 
- use def_atm,      only: StrAtm, allocate_atm
- use def_dimen,    only: StrDim
- use def_spectrum, only: StrSpecData
- use realtype_rd,  only: RealK
- use gas_list_pcf, only: ip_h2o, ip_co2, ip_o3, ip_n2o, ip_ch4, ip_o2, ip_so2, &
+
+  Use, intrinsic :: ISO_C_BINDING 
+  use def_atm,      only: StrAtm, allocate_atm
+  use def_dimen,    only: StrDim
+  use def_spectrum, only: StrSpecData
+  use realtype_rd,  only: RealK
+  use gas_list_pcf, only: ip_h2o, ip_co2, ip_o3, ip_n2o, ip_ch4, ip_o2, ip_so2, &
   ip_n2, ip_cfc11, ip_cfc12, ip_cfc113, ip_hcfc22, ip_hfc134a
 
- implicit none
+  implicit none
 
 
   ! Atmospheric properties:
@@ -691,23 +691,7 @@ end subroutine runes_wrap
   integer, intent(in), optional :: i_profile_debug
   !   Options for outputting debugging information
 
-  CALL set_atm(atm, dimen, spectrum, n_profile, n_layer, &
-  p_layer, t_layer, mass, density, p_level, t_level, r_layer, r_level, &
-  p_layer_1d, t_layer_1d, mass_1d, density_1d, p_level_1d, t_level_1d, &
-  r_layer_1d, r_level_1d, &
-  h2o, co2, o3, n2o, ch4, o2, so2, n2, cfc11, cfc12, cfc113, hcfc22, hfc134a, &
-  h2o_1d, co2_1d, o3_1d, n2o_1d, ch4_1d, o2_1d, so2_1d, n2_1d, cfc11_1d, &
-  cfc12_1d, cfc113_1d, hcfc22_1d, hfc134a_1d, &
-  h2o_mix_ratio, co2_mix_ratio, o3_mix_ratio, n2o_mix_ratio, ch4_mix_ratio, &
-  o2_mix_ratio, so2_mix_ratio, n2_mix_ratio, cfc11_mix_ratio, cfc12_mix_ratio, &
-  cfc113_mix_ratio, hcfc22_mix_ratio, hfc134a_mix_ratio, &
-  l_h2o_well_mixed, l_co2_well_mixed, l_o3_well_mixed, l_n2o_well_mixed, &
-  l_ch4_well_mixed, l_o2_well_mixed, l_so2_well_mixed, l_n2_well_mixed, &
-  l_cfc11_well_mixed, l_cfc12_well_mixed, l_cfc113_well_mixed, &
-  l_hcfc22_well_mixed, l_hfc134a_well_mixed, &
-  l_invert, l_debug, i_profile_debug)
-
- 
+  
  end subroutine set_atm_wrap
 
  subroutine set_bound_wrap(bound, control, dimen, spectrum, &
@@ -715,18 +699,19 @@ end subroutine runes_wrap
   t_ground, cos_zenith_angle, solar_irrad, orog_corr, &
   l_grey_albedo, grey_albedo, albedo_diff, albedo_dir, &
   frac_tile, t_tile, albedo_diff_tile, albedo_dir_tile, &
-  l_debug, i_profile_debug) BIND(C)
+  l_debug, i_profile_debug) !BIND(C,name='set_bound')
 
- Use, intrinsic :: ISO_C_BINDING 
- use def_bound,    only: StrBound, allocate_bound
- use def_control,  only: StrCtrl
- use def_dimen,    only: StrDim
- use def_spectrum, only: StrSpecData
- use realtype_rd,  only: RealK
- use rad_pcf,      only: &
+
+  Use, intrinsic :: ISO_C_BINDING 
+  use def_bound,    only: StrBound, allocate_bound
+  use def_control,  only: StrCtrl
+  use def_dimen,    only: StrDim
+  use def_spectrum, only: StrSpecData
+  use realtype_rd,  only: RealK
+  use rad_pcf,      only: &
   ip_solar, ip_infra_red, ip_surf_alb_diff, ip_surf_alb_dir
 
- implicit none
+  implicit none
 
 
   ! Boundary properties:
@@ -764,7 +749,7 @@ end subroutine runes_wrap
    albedo_diff(n_profile, spectrum%dim%nd_band), &
    albedo_dir(n_profile, spectrum%dim%nd_band)
 
-  real(C_DOUBLE)  , intent(in), optional :: &
+  real(C_DOUBLE), intent(in), optional :: &
    frac_tile(n_profile, dimen%nd_tile), &
    albedo_diff_tile(n_profile, dimen%nd_tile, spectrum%dim%nd_band), &
    albedo_dir_tile(n_profile, dimen%nd_tile, spectrum%dim%nd_band), &
@@ -774,13 +759,7 @@ end subroutine runes_wrap
   integer (C_INT), intent(in), optional :: i_profile_debug
   !   Options for outputting debugging information
 
-  CALL set_bound(bound, control, dimen, spectrum, &
-  n_profile, n_tile, &
-  t_ground, cos_zenith_angle, solar_irrad, orog_corr, &
-  l_grey_albedo, grey_albedo, albedo_diff, albedo_dir, &
-  frac_tile, t_tile, albedo_diff_tile, albedo_dir_tile, &
-  l_debug, i_profile_debug)
-
+ 
  end subroutine set_bound_wrap
 
  subroutine set_cld_wrap(cld, control, dimen, spectrum, atm, &
@@ -793,33 +772,32 @@ end subroutine runes_wrap
   liq_mmr_1d, ice_mmr_1d, liq_conv_mmr_1d, ice_conv_mmr_1d, &
   liq_rsd_1d, ice_rsd_1d, liq_conv_rsd_1d, ice_conv_rsd_1d, &
   cloud_vertical_decorr, conv_vertical_decorr, cloud_horizontal_rsd, &
-  l_invert, l_debug, i_profile_debug) BIND(C)
+  l_invert, l_debug, i_profile_debug) !BIND(C,name='set_cld')
 
 
- Use, intrinsic :: ISO_C_BINDING 
- use def_cld,      only: StrCld, allocate_cld, allocate_cld_prsc
- use def_control,  only: StrCtrl
- use def_dimen,    only: StrDim
- use def_spectrum, only: StrSpecData
- use def_atm,      only: StrAtm 
- use realtype_rd,  only: RealK
- use rad_pcf,      only: &
-  ip_cloud_homogen, ip_cloud_ice_water, ip_cloud_conv_strat, ip_cloud_csiw, &
-  ip_cloud_combine_homogen, ip_cloud_combine_ice_water, &
-  ip_cloud_split_homogen, ip_cloud_split_ice_water, &
-  ip_clcmp_st_water, ip_clcmp_st_ice, ip_clcmp_cnv_water, ip_clcmp_cnv_ice, &
-  ip_phase_water, ip_phase_ice, ip_cloud_type_homogen, &
-  ip_cloud_type_water, ip_cloud_type_ice, &
-  ip_cloud_type_strat, ip_cloud_type_conv, &
-  ip_cloud_type_sw, ip_cloud_type_si, ip_cloud_type_cw, ip_cloud_type_ci, &
-  ip_drop_unparametrized, ip_ice_unparametrized, &
-  ip_scaling, ip_cairns, ip_mcica, ip_tripleclouds_2019, &
-  i_normal, i_err_fatal
- use ereport_mod,  only: ereport
- use errormessagelength_mod, only: errormessagelength
+  Use, intrinsic :: ISO_C_BINDING 
+  use def_cld,      only: StrCld, allocate_cld, allocate_cld_prsc
+  use def_control,  only: StrCtrl
+  use def_dimen,    only: StrDim
+  use def_spectrum, only: StrSpecData
+  use def_atm,      only: StrAtm 
+  use realtype_rd,  only: RealK
+  use rad_pcf,      only: &
+   ip_cloud_homogen, ip_cloud_ice_water, ip_cloud_conv_strat, ip_cloud_csiw, &
+   ip_cloud_combine_homogen, ip_cloud_combine_ice_water, &
+   ip_cloud_split_homogen, ip_cloud_split_ice_water, &
+   ip_clcmp_st_water, ip_clcmp_st_ice, ip_clcmp_cnv_water, ip_clcmp_cnv_ice, &
+   ip_phase_water, ip_phase_ice, ip_cloud_type_homogen, &
+   ip_cloud_type_water, ip_cloud_type_ice, &
+   ip_cloud_type_strat, ip_cloud_type_conv, &
+   ip_cloud_type_sw, ip_cloud_type_si, ip_cloud_type_cw, ip_cloud_type_ci, &
+   ip_drop_unparametrized, ip_ice_unparametrized, &
+   ip_scaling, ip_cairns, ip_mcica, ip_tripleclouds_2019, &
+   i_normal, i_err_fatal
+  use ereport_mod,  only: ereport
+  use errormessagelength_mod, only: errormessagelength
 
- implicit none
-
+  implicit none
 
   ! Cloud properties:
   type(StrCld),      intent(out) :: cld
@@ -866,18 +844,6 @@ end subroutine runes_wrap
   integer, intent(in), optional :: i_profile_debug
   !   Options for outputting debugging information
 
-  CALL set_cld(cld, control, dimen, spectrum, atm, &
-  cloud_frac, conv_frac, &
-  liq_frac, ice_frac, liq_conv_frac, ice_conv_frac, &
-  liq_mmr, ice_mmr, liq_conv_mmr, ice_conv_mmr, &
-  liq_rsd, ice_rsd, liq_conv_rsd, ice_conv_rsd, &
-  cloud_frac_1d, conv_frac_1d, &
-  liq_frac_1d, ice_frac_1d, liq_conv_frac_1d, ice_conv_frac_1d, &
-  liq_mmr_1d, ice_mmr_1d, liq_conv_mmr_1d, ice_conv_mmr_1d, &
-  liq_rsd_1d, ice_rsd_1d, liq_conv_rsd_1d, ice_conv_rsd_1d, &
-  cloud_vertical_decorr, conv_vertical_decorr, cloud_horizontal_rsd, &
-  l_invert, l_debug, i_profile_debug)
-
 
  end subroutine set_cld_wrap 
 
@@ -886,25 +852,25 @@ end subroutine runes_wrap
   liq_dim, ice_dim, liq_conv_dim, ice_conv_dim, &
   liq_nc_1d, liq_conv_nc_1d, &
   liq_dim_1d, ice_dim_1d, liq_conv_dim_1d, ice_conv_dim_1d, &
-  l_invert, l_debug, i_profile_debug) BIND(C)
+  l_invert, l_debug, i_profile_debug) !BIND(C,name='set_cld_dim')
 
- Use, intrinsic :: ISO_C_BINDING 
- use def_cld,      only: StrCld
- use def_control,  only: StrCtrl
- use def_dimen,    only: StrDim
- use def_spectrum, only: StrSpecData
- use def_atm,      only: StrAtm
- use realtype_rd,  only: RealK
- use rad_pcf,      only: &
+
+  Use, intrinsic :: ISO_C_BINDING 
+  use def_cld,      only: StrCld
+  use def_control,  only: StrCtrl
+  use def_dimen,    only: StrDim
+  use def_spectrum, only: StrSpecData
+  use def_atm,      only: StrAtm
+  use realtype_rd,  only: RealK
+  use rad_pcf,      only: &
   ip_cloud_split_homogen, ip_cloud_split_ice_water, &
   ip_clcmp_st_water, ip_clcmp_st_ice, ip_clcmp_cnv_water, ip_clcmp_cnv_ice, &
   ip_re_external, &
   i_normal, i_err_fatal
- use ereport_mod,  only: ereport
- use errormessagelength_mod, only: errormessagelength
+  use ereport_mod,  only: ereport
+  use errormessagelength_mod, only: errormessagelength
 
- implicit none
-
+  implicit none
 
   ! Cloud properties:
   type(StrCld),      intent(inout) :: cld
@@ -936,37 +902,30 @@ end subroutine runes_wrap
   integer(C_INT), intent(in), optional :: i_profile_debug
   !   Options for outputting debugging information
 
-  CALL set_cld_dim(cld, control, dimen, spectrum, atm, &
-  liq_nc, liq_conv_nc, &
-  liq_dim, ice_dim, liq_conv_dim, ice_conv_dim, &
-  liq_nc_1d, liq_conv_nc_1d, &
-  liq_dim_1d, ice_dim_1d, liq_conv_dim_1d, ice_conv_dim_1d, &
-  l_invert, l_debug, i_profile_debug)
-
+  
  end subroutine set_cld_dim_wrap
  
  subroutine set_cld_mcica_wrap(cld, mcica_data, control, dimen, spectrum, atm, &
-  rand_seed) BIND(C)
+  rand_seed) !BIND(C,name='set_cld_mcica')
+
  
-  Use, intrinsic :: ISO_C_BINDING 
-  use def_cld,      only: StrCld, allocate_cld_mcica
-  use def_mcica,    only: StrMcica, ip_mcica_full_sampling, &
-  ip_mcica_single_sampling, ip_mcica_optimal_sampling
-  use def_control,  only: StrCtrl
-  use def_dimen,    only: StrDim
-  use def_spectrum, only: StrSpecData
-  use def_atm,      only: StrAtm
-  use realtype_rd,  only: RealK
-  use rad_pcf,      only: &
-  ip_cloud_off, ip_cloud_mcica, ip_solar, &
-  i_normal, i_err_fatal
- use ereport_mod,  only: ereport
- use errormessagelength_mod, only: errormessagelength
+   Use, intrinsic :: ISO_C_BINDING 
+   use def_cld,      only: StrCld, allocate_cld_mcica
+   use def_mcica,    only: StrMcica, ip_mcica_full_sampling, &
+   ip_mcica_single_sampling, ip_mcica_optimal_sampling
+   use def_control,  only: StrCtrl
+   use def_dimen,    only: StrDim
+   use def_spectrum, only: StrSpecData
+   use def_atm,      only: StrAtm
+   use realtype_rd,  only: RealK
+   use rad_pcf,      only: &
+   ip_cloud_off, ip_cloud_mcica, ip_solar, &
+   i_normal, i_err_fatal
+   use ereport_mod,  only: ereport
+   use errormessagelength_mod, only: errormessagelength
+   use socrates_cloud_gen, only: cloud_gen
 
- use socrates_cloud_gen, only: cloud_gen
-
- implicit none
-
+   implicit none
 
   ! Cloud properties:
   type(StrCld),      intent(inout) :: cld
@@ -1009,9 +968,6 @@ end subroutine runes_wrap
   character (len=*), parameter :: RoutineName = 'SET_CLD_MCICA'
   character (len=errormessagelength) :: cmessage
 
- CALL set_cld_mcica(cld, mcica_data, control, dimen, spectrum, atm, &
-  rand_seed)
-
  end subroutine set_cld_mcica_wrap
 
  subroutine set_control_wrap(control, spectrum, l_set_defaults, &
@@ -1024,16 +980,17 @@ end subroutine runes_wrap
   l_blue_flux_surf, &
   n_tile, n_cloud_layer, n_aer_mode, &
   isolir, i_cloud_representation, i_overlap, i_inhom, i_mcica_sampling, &
-  i_st_water, i_cnv_water, i_st_ice, i_cnv_ice, i_drop_re ) BIND(C)
+  i_st_water, i_cnv_water, i_st_ice, i_cnv_ice, i_drop_re ) !BIND(C,name='set_control')
 
- Use, intrinsic :: ISO_C_BINDING 
- use def_control,  only: StrCtrl, allocate_control
- use def_spectrum, only: StrSpecData
- use realtype_rd,  only: RealK
- use ereport_mod,  only: ereport
- use errormessagelength_mod, only: errormessagelength
- use missing_data_mod, only: imdi
- use rad_pcf, only: &
+
+  Use, intrinsic :: ISO_C_BINDING 
+  use def_control,  only: StrCtrl, allocate_control
+  use def_spectrum, only: StrSpecData
+  use realtype_rd,  only: RealK
+  use ereport_mod,  only: ereport
+  use errormessagelength_mod, only: errormessagelength
+  use missing_data_mod, only: imdi
+  use rad_pcf, only: &
   ip_solar, ip_pifm80, ip_scatter_full, ip_infra_red, ip_elsasser, &
   ip_two_stream, ip_ir_gauss, ip_spherical_harmonic, ip_overlap_k_eqv_scl, &
   ip_cloud_off, ip_cloud_homogen, ip_cloud_ice_water, ip_cloud_conv_strat, &
@@ -1048,9 +1005,9 @@ end subroutine runes_wrap
   ip_solver_triple_hogan, ip_cloud_triple, ip_cloud_part_corr_cnv, &
   ip_cloud_clear, ip_scale_ses2, ip_overlap_mix_ses2, ip_re_external, &
   i_normal, i_err_fatal
- use def_mcica, only: ip_mcica_optimal_sampling
+  use def_mcica, only: ip_mcica_optimal_sampling
 
- implicit none
+  implicit none
 
   ! Control options:
   type(StrCtrl), intent(inout) :: control
@@ -1073,18 +1030,7 @@ end subroutine runes_wrap
    i_cloud_representation, i_overlap, i_inhom, i_mcica_sampling, &
    i_st_water, i_cnv_water, i_st_ice, i_cnv_ice, i_drop_re
 
-  CALL set_control(control, spectrum, l_set_defaults, &
-  l_rayleigh, l_gas, l_continuum, l_cont_gen, l_orog, l_solvar, &
-  l_rescale, l_ir_source_quad, l_mixing_ratio, &
-  l_aerosol, l_aerosol_mode, l_aerosol_ccn, &
-  l_tile, l_clear, &
-  l_flux_up_band, l_flux_down_band, &
-  l_flux_up_clear_band, l_flux_down_clear_band, &
-  l_blue_flux_surf, &
-  n_tile, n_cloud_layer, n_aer_mode, &
-  isolir, i_cloud_representation, i_overlap, i_inhom, i_mcica_sampling, &
-  i_st_water, i_cnv_water, i_st_ice, i_cnv_ice, i_drop_re )
-
+  
  end subroutine set_control_wrap
 
  subroutine set_diag_wrap(control, dimen, spectrum, &
@@ -1107,27 +1053,28 @@ end subroutine runes_wrap
   liq_incloud_mmr_diag_1d, ice_incloud_mmr_diag_1d, &
   liq_inconv_mmr_diag_1d, ice_inconv_mmr_diag_1d, &
   liq_dim_diag_1d, ice_dim_diag_1d, &
-  liq_conv_dim_diag_1d, ice_conv_dim_diag_1d) BIND(C)
+  liq_conv_dim_diag_1d, ice_conv_dim_diag_1d) !BIND(C,name='set_diag')
 
- Use, intrinsic :: ISO_C_BINDING 
- use def_control,  only: StrCtrl
- use def_dimen,    only: StrDim
- use def_spectrum, only: StrSpecData
- use def_atm,      only: StrAtm
- use def_cld,      only: StrCld
- use def_mcica,    only: StrMcica
- use def_aer,      only: StrAer
- use def_bound,    only: StrBound
- use def_out,      only: StrOut
 
- use realtype_rd, only: RealK
- use ereport_mod,  only: ereport
- use errormessagelength_mod, only: errormessagelength
- use rad_pcf, only: i_normal, i_err_fatal, ip_cloud_off, ip_mcica, &
+  Use, intrinsic :: ISO_C_BINDING 
+  use def_control,  only: StrCtrl
+  use def_dimen,    only: StrDim
+  use def_spectrum, only: StrSpecData
+  use def_atm,      only: StrAtm
+  use def_cld,      only: StrCld
+  use def_mcica,    only: StrMcica
+  use def_aer,      only: StrAer
+  use def_bound,    only: StrBound
+  use def_out,      only: StrOut
+
+  use realtype_rd, only: RealK
+  use ereport_mod,  only: ereport
+  use errormessagelength_mod, only: errormessagelength
+  use rad_pcf, only: i_normal, i_err_fatal, ip_cloud_off, ip_mcica, &
                    ip_clcmp_st_water, ip_clcmp_st_ice, &
                    ip_clcmp_cnv_water, ip_clcmp_cnv_ice
 
- implicit none
+  implicit none
 
   ! Control options:
   type(StrCtrl),      intent(in) :: control
@@ -1228,54 +1175,34 @@ end subroutine runes_wrap
   character (len=errormessagelength) :: cmessage
   character (len=*), parameter :: RoutineName = 'SET_DIAG'
 
-  CALL set_diag(control, dimen, spectrum, &
-  atm, cld, mcica_data, aer, bound, radout, &
-  n_profile, n_layer, n_tile, &
-  layer_heat_capacity, layer_heat_capacity_1d, l_invert, &
-  flux_direct, flux_down, flux_up, heating_rate, &
-  flux_up_tile, flux_up_blue_tile, flux_direct_blue_surf, flux_down_blue_surf, &
-  flux_direct_1d, flux_down_1d, flux_up_1d, heating_rate_1d, &
-  flux_up_tile_1d, flux_up_blue_tile_1d, &
-  total_cloud_cover, total_cloud_fraction, total_cloud_fraction_1d, &
-  liq_frac_diag, ice_frac_diag, &
-  liq_conv_frac_diag, ice_conv_frac_diag, &
-  liq_incloud_mmr_diag, ice_incloud_mmr_diag, &
-  liq_inconv_mmr_diag, ice_inconv_mmr_diag, &
-  liq_dim_diag, ice_dim_diag, &
-  liq_conv_dim_diag, ice_conv_dim_diag, &
-  liq_frac_diag_1d, ice_frac_diag_1d, &
-  liq_conv_frac_diag_1d, ice_conv_frac_diag_1d, &
-  liq_incloud_mmr_diag_1d, ice_incloud_mmr_diag_1d, &
-  liq_inconv_mmr_diag_1d, ice_inconv_mmr_diag_1d, &
-  liq_dim_diag_1d, ice_dim_diag_1d, &
-  liq_conv_dim_diag_1d, ice_conv_dim_diag_1d)
-
+ 
  end subroutine set_diag_wrap 
 
  subroutine set_dimen_wrap(dimen, control, n_profile, n_layer, mcica_data, &
   n_channel, n_tile, n_cloud_layer, n_aer_mode, &
   n_direction, n_viewing_level, n_brdf_basis_fnc, n_brdf_trunc, &
   n_profile_aerosol_prsc, n_profile_cloud_prsc, &
-  n_opt_level_aerosol_prsc, n_opt_level_cloud_prsc) BIND(C)
+  n_opt_level_aerosol_prsc, n_opt_level_cloud_prsc) 
 
- Use, intrinsic :: ISO_C_BINDING 
- use def_dimen,   only: StrDim
- use def_control, only: StrCtrl
- use def_mcica,   only: StrMcica, ip_mcica_full_sampling, &
-  ip_mcica_single_sampling, ip_mcica_optimal_sampling
- use rad_pcf,     only: &
-  ip_cloud_homogen, ip_cloud_ice_water, ip_cloud_conv_strat, ip_cloud_csiw, &
-  ip_cloud_combine_homogen, ip_cloud_combine_ice_water, &
-  ip_cloud_split_homogen, ip_cloud_split_ice_water, &
-  ip_cloud_column_max, ip_solver_mix_app_scat, ip_solver_mix_direct, &
-  ip_solver_mix_direct_hogan, ip_solver_triple_app_scat, ip_solver_triple, &
-  ip_solver_triple_hogan, ip_two_stream, ip_spherical_harmonic, &
-  ip_sph_mode_flux, ip_trunc_triangular, ip_trunc_azim_sym, &
-  i_normal, i_err_fatal
- use ereport_mod, only: ereport
- use errormessagelength_mod, only: errormessagelength
 
- implicit none
+   Use, intrinsic :: ISO_C_BINDING 
+   use def_dimen,   only: StrDim
+   use def_control, only: StrCtrl
+   use def_mcica,   only: StrMcica, ip_mcica_full_sampling, &
+    ip_mcica_single_sampling, ip_mcica_optimal_sampling
+   use rad_pcf,     only: &
+   ip_cloud_homogen, ip_cloud_ice_water, ip_cloud_conv_strat, ip_cloud_csiw, &
+   ip_cloud_combine_homogen, ip_cloud_combine_ice_water, &
+   ip_cloud_split_homogen, ip_cloud_split_ice_water, &
+   ip_cloud_column_max, ip_solver_mix_app_scat, ip_solver_mix_direct, &
+   ip_solver_mix_direct_hogan, ip_solver_triple_app_scat, ip_solver_triple, &
+   ip_solver_triple_hogan, ip_two_stream, ip_spherical_harmonic, &
+   ip_sph_mode_flux, ip_trunc_triangular, ip_trunc_azim_sym, &
+   i_normal, i_err_fatal
+   use ereport_mod, only: ereport
+   use errormessagelength_mod, only: errormessagelength
+
+   implicit none
 
   ! Dimensions:
   type(StrDim), intent(inout) :: dimen
@@ -1301,32 +1228,28 @@ end subroutine runes_wrap
   character (len=*), parameter :: RoutineName = 'SET_DIMEN'
   character (len=errormessagelength) :: cmessage
 
-  CALL set_dimen(dimen, control, n_profile, n_layer, mcica_data, &
-  n_channel, n_tile, n_cloud_layer, n_aer_mode, &
-  n_direction, n_viewing_level, n_brdf_basis_fnc, n_brdf_trunc, &
-  n_profile_aerosol_prsc, n_profile_cloud_prsc, &
-  n_opt_level_aerosol_prsc, n_opt_level_cloud_prsc)
-
+  
  end subroutine set_dimen_wrap
 
  subroutine set_spectrum_wrap(n_instances, spectrum, spectrum_name, spectral_file, &
   l_h2o, l_co2, l_o3, l_o2, l_n2o, l_ch4, l_so2, l_cfc11, l_cfc12, &
   l_cfc113, l_cfc114, l_hcfc22, l_hfc125, l_hfc134a, l_co, l_nh3, &
   l_tio, l_vo, l_h2, l_he, l_na, l_k, l_li, l_rb, l_cs, l_all_gases, &
-  wavelength_blue) BIND(C)
+  wavelength_blue) 
 
- Use, intrinsic :: ISO_C_BINDING 
- use filenamelength_mod, only: filenamelength
- use errormessagelength_mod, only: errormessagelength
- use ereport_mod, only: ereport
- use rad_pcf, only: i_normal, i_err_fatal
- use realtype_rd, only: RealK
- use missing_data_mod, only: rmdi
- use yomhook,  only: lhook, dr_hook
- use parkind1, only: jprb, jpim
 
- implicit none
+   Use, intrinsic :: ISO_C_BINDING 
+   use filenamelength_mod, only: filenamelength
+   use errormessagelength_mod, only: errormessagelength
+   use ereport_mod, only: ereport
+   use rad_pcf, only: i_normal, i_err_fatal
+   use realtype_rd, only: RealK
+   use missing_data_mod, only: rmdi
+   use yomhook,  only: lhook, dr_hook
+   use parkind1, only: jprb, jpim
+   use def_spectrum
 
+   implicit none
 
   ! Number of instances of the spectrum type (to allocate spectrum_array)
   integer (C_INT), intent(in), optional :: n_instances
@@ -1343,13 +1266,90 @@ end subroutine runes_wrap
 
   real (C_DOUBLE), intent(in), optional :: wavelength_blue
 
-  CALL set_spectrum(n_instances, spectrum, spectrum_name, spectral_file, &
+ end subroutine set_spectrum_wrap
+
+ subroutine compress_spectrum_wrap(spec, &
   l_h2o, l_co2, l_o3, l_o2, l_n2o, l_ch4, l_so2, l_cfc11, l_cfc12, &
   l_cfc113, l_cfc114, l_hcfc22, l_hfc125, l_hfc134a, l_co, l_nh3, &
-  l_tio, l_vo, l_h2, l_he, l_na, l_k, l_li, l_rb, l_cs, l_all_gases, &
-  wavelength_blue)
+  l_tio, l_vo, l_h2, l_he, l_na, l_k, l_li, l_rb, l_cs, l_all_gases)
 
- end subroutine set_spectrum_wrap
+   Use, intrinsic :: ISO_C_BINDING
+   use def_spectrum 
+   use def_mcica, only: StrMcica
+   use gas_list_pcf, only: &
+    ip_h2o, ip_co2, ip_o3, ip_o2, ip_n2o, ip_ch4, ip_so2, ip_cfc11, ip_cfc12, &
+    ip_cfc113, ip_cfc114, ip_hcfc22, ip_hfc125, ip_hfc134a, ip_co, ip_nh3, &
+    ip_tio, ip_vo, ip_h2, ip_he, ip_na, ip_k, ip_li, ip_rb, ip_cs
+
+   ! implicit none
+
+  type(StrSpecData), intent(inout) :: spec
+
+  logical(C_BOOL), intent(in), optional :: &
+   l_h2o, l_co2, l_o3, l_o2, l_n2o, l_ch4, l_so2, l_cfc11, l_cfc12, &
+   l_cfc113, l_cfc114, l_hcfc22, l_hfc125, l_hfc134a, l_co, l_nh3, &
+   l_tio, l_vo, l_h2, l_he, l_na, l_k, l_li, l_rb, l_cs, l_all_gases
+
+  integer(C_INT) :: i, j, n_band_absorb
+  logical(C_BOOL) :: l_retain_absorb(spec%gas%n_absorb)
+  logical(C_BOOL) :: l_retain_all
+
+ end subroutine compress_spectrum_wrap 
+
+ subroutine set_weight_blue_wrap(spec, wavelength_blue)
+
+  Use, intrinsic :: ISO_C_BINDING
+  use def_spectrum 
+  use def_mcica, only: StrMcica
+
+  !use realtype_rd, only: RealK
+  !implicit none
+
+  type(StrSpecData), intent(inout) :: spec
+  real (C_DOUBLE), intent(in), optional :: wavelength_blue
+  
+  end subroutine set_weight_blue_wrap
+
+ subroutine get_spectrum_wrap(spectrum_name, spectrum, &
+   n_band, wavelength_short, wavelength_long, weight_blue)
+
+   Use, intrinsic :: ISO_C_BINDING
+   use def_spectrum  
+   use realtype_rd, only: RealK
+   use errormessagelength_mod, only: errormessagelength
+   use ereport_mod, only: ereport
+   use rad_pcf, only: i_normal, i_err_fatal
+
+   !implicit none
+
+  character(len=*), intent(in) :: spectrum_name
+  type (StrSpecData), intent(out), optional :: spectrum
+
+  integer(C_INT), optional, intent(out) :: n_band
+  real (RealK), allocatable, optional, intent(out) :: wavelength_short(:)
+  real (RealK), allocatable, optional, intent(out) :: wavelength_long(:)
+  real (RealK), allocatable, optional, intent(out) :: weight_blue(:)
+
+ end subroutine get_spectrum_wrap
+
+ subroutine set_mcica_wrap(mcica_data_file, sw_spectrum_name, lw_spectrum_name)
+
+   Use, intrinsic :: ISO_C_BINDING
+   use def_mcica, only: read_mcica_data
+   use errormessagelength_mod, only: errormessagelength
+   use ereport_mod, only: ereport
+   use rad_pcf, only: i_normal, i_err_fatal
+   use yomhook,  only: lhook, dr_hook
+   use parkind1, only: jprb, jpim
+
+   !implicit none
+
+
+ ! Spectral data:
+  character(len=*), intent(in) :: mcica_data_file
+  character(len=*), intent(in), optional :: sw_spectrum_name, lw_spectrum_name
+ end subroutine set_mcica_wrap
+
 END INTERFACE
 
 END PROGRAM Interface_core
