@@ -1,0 +1,15 @@
+#
+# Pathnames for compilers and global options for naming files
+#
+FORTCOMP        = ifort -O -c
+LINK            = ifort -O
+LIBLINK         = ar rvu
+INCCDF_PATH     = /usr/include
+LIBCDF_PATH     = /usr/lib/x86_64-linux-gnu
+LIBCDF_NAME     = netcdff
+OMPARG          = -qopenmp
+
+LIBSUFFIX       = a
+
+.SUFFIXES: $(SUFFIXES) .f90
+
