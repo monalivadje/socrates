@@ -68,7 +68,7 @@ def main():
 
   runeslib.runes_wrap(n_profile ,n_layer , diag , spectrum_name , i_source , numpy_pointer(p_layer, ffi), numpy_pointer(t_layer,ffi), numpy_pointer(mass,ffi) , numpy_pointer(density,ffi) ,numpy_pointer(layer_heat_capacity,ffi) ,numpy_pointer(o3,ffi), co2_mix_ratio, n2o_mix_ratio , ch4_mix_ratio , o2_mix_ratio , cos_zenith_angle , solar_irrad , l_grey_albedo, grey_albedo, l_rayleigh ,l_invert, numpy_pointer(sw_heating_rate,ffi), numpy_pointer(sw_flux_up,ffi), numpy_pointer(sw_flux_down,ffi)) 
 
-   print(“In python after call to runes_wrap  trying to print heating rate, flux_up & flux_down for SW”)
+   print(“In python after call to runes_wrap  trying to display heating rate, flux_up and flux_down for SW”)
    print((sw_heating_rate) 
    print(sw_flux_up) 
    print(sw_flux_down)
@@ -77,7 +77,7 @@ def main():
   runeslib.runes_wrap(n_profile ,n_layer , diag , spectrum_name , i_source , numpy_pointer(p_layer, ffi), numpy_pointer(t_layer,ffi) , numpy_pointer(mass,ffi) , numpy_pointer(density,ffi) ,numpy_pointer(layer_heat_capacity,ffi) ,numpy_pointer(o3,ffi), co2_mix_ratio , n2o_mix_ratio , ch4_mix_ratio ,o2_mix_ratio , cos_zenith_angle , solar_irrad , l_grey_albedo, grey_albedo, l_rayleigh , l_invert, numpy_pointer(lw_heating_rate,ffi), numpy_pointer(lw_flux_up,ffi),numpy_pointer(lw_flux_down,ffi))
 
 
-   print(“In python after call to runes_wrap trying to print heating rate, flux_up & flux_down for LW”)
+   print(“In python after call to runes_wrap trying to display heating rate, flux_up and flux_down for LW”)
    print((lw_heating_rate) 
    print(lw_flux_up) 
    print(lw_flux_down)
