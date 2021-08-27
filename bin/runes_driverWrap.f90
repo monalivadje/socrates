@@ -28,34 +28,34 @@ module runes_driverWrap
   integer(C_INT), intent(in) :: n_profile 
   integer(C_INT), intent(in) :: n_layer 
   type(StrDiag) :: sw_diag, lw_diag
-  real(C_DOUBLE), intent(out) :: heating_rate(n_profile, n_layer)
-  real(C_DOUBLE), intent(out) :: flux_up(n_profile, 0:n_layer)
-  real(C_DOUBLE), intent(out) :: flux_down(n_profile, 0:n_layer)
-  real(C_DOUBLE), intent(out) :: sw_heating_rate(n_profile, n_layer)
-  real(C_DOUBLE), intent(out) :: lw_heating_rate(n_profile, n_layer)
-  real(C_DOUBLE), intent(out) :: sw_flux_up(n_profile, 0:n_layer)
-  real(C_DOUBLE), intent(out) :: sw_flux_down(n_profile, 0:n_layer)
-  real(C_DOUBLE), intent(out) :: lw_flux_up(n_profile, 0:n_layer)
-  real(C_DOUBLE), intent(out) :: lw_flux_down(n_profile, 0:n_layer)
+  real(C_DOUBLE) :: heating_rate(n_profile, n_layer)
+  real(C_DOUBLE) :: flux_up(n_profile, 0:n_layer)
+  real(C_DOUBLE) :: flux_down(n_profile, 0:n_layer)
+  real(C_DOUBLE) :: sw_heating_rate(n_profile, n_layer)
+  real(C_DOUBLE) :: lw_heating_rate(n_profile, n_layer)
+  real(C_DOUBLE) :: sw_flux_up(n_profile, 0:n_layer)
+  real(C_DOUBLE) :: sw_flux_down(n_profile, 0:n_layer)
+  real(C_DOUBLE) :: lw_flux_up(n_profile, 0:n_layer)
+  real(C_DOUBLE) :: lw_flux_down(n_profile, 0:n_layer)
 
   ! Mid-latitude Summer McClatchey profile
   real(C_DOUBLE), intent(in) :: p_layer(n_profile, n_layer) 
   real(C_DOUBLE), intent(in) :: t_layer(n_profile, n_layer) 
   real(C_DOUBLE) :: p_level(n_profile, 0:n_layer) 
   real(C_DOUBLE) :: t_level(n_profile, 0:n_layer) 
-  real(C_DOUBLE) :: t_ground(n_profile) = 294.0
+  real(C_DOUBLE) :: t_ground(n_profile) 
   real(C_DOUBLE), intent(in) :: h2o(n_profile, n_layer) 
   real(C_DOUBLE), intent(in) :: o3(n_profile, n_layer) 
 
-  real(C_DOUBLE), intent(in) :: co2_mix_ratio 
-  real(C_DOUBLE), intent(in) :: ch4_mix_ratio 
-  real(C_DOUBLE), intent(in) :: n2o_mix_ratio 
-  real(C_DOUBLE), intent(in) :: o2_mix_ratio 
+  real(C_DOUBLE), intent(in), value :: co2_mix_ratio 
+  real(C_DOUBLE), intent(in), value :: ch4_mix_ratio 
+  real(C_DOUBLE), intent(in), value :: n2o_mix_ratio 
+  real(C_DOUBLE), intent(in), value :: o2_mix_ratio 
 
   real(C_DOUBLE), intent(in) :: cos_zenith_angle(n_profile) 
   real(C_DOUBLE), intent(in) :: solar_irrad(n_profile)
-  real(C_DOUBLE), intent(in) :: grey_albedo_sw 
-  real(C_DOUBLE), intent(in) :: grey_albedo_lw 
+  real(C_DOUBLE) :: grey_albedo_sw 
+  real(C_DOUBLE) :: grey_albedo_lw 
 
   real(C_DOUBLE), dimension(n_profile, n_layer) :: d_mass, density
   real(C_DOUBLE), dimension(n_profile, n_layer) :: layer_heat_capacity
