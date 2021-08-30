@@ -21,7 +21,7 @@ def main():
 
     ffi = cffi.FFI()
     ffibuilder = FFI()
-    ffibuilder.cdef("void runes_wrap( int n_profile , int n_layer , double *diag , char *spectrum_name , double i_source , double *p_layer, double *t_layer , double *mass , double *density , double *layer_heat_capacity , double  *h2o , double *o3 , double co2_mix_ratio , double n2o_mix_ratio , double ch4_mix_ratio , double o2_mix_ratio , double cos_zenith_angle , double solar_irrad , bool l_grey_albedo, double grey_albedo , bool l_rayleigh , bool l_invert ,double *heating_rate, double *flux_up, double *flux_down);") 
+    ffibuilder.cdef("void runes_wrapper( int n_profile , int n_layer , double *diag , char *spectrum_name , double i_source , double *p_layer, double *t_layer , double *mass , double *density , double *layer_heat_capacity , double  *h2o , double *o3 , double co2_mix_ratio , double n2o_mix_ratio , double ch4_mix_ratio , double o2_mix_ratio , double cos_zenith_angle , double solar_irrad , bool l_grey_albedo, double grey_albedo , bool l_rayleigh , bool l_invert ,double *heating_rate, double *flux_up, double *flux_down);") 
     ! ffibuilder.cdef("void set_spectrum( char *spectrum_name , char *spectral_file , bool l_all_gases);")
 
  desired_compiler = 'gcc'
@@ -66,7 +66,7 @@ def main():
   lw_flux_up = np.empty((n_profile, 0:n_layer), order="F")
   lw_flux_down = np.empty((n_profile, 0:n_layer), order="F")
 
-  runeslib.runes_wrap(n_profile ,n_layer , diag , spectrum_name , i_source , numpy_pointer(p_layer, ffi), numpy_pointer(t_layer,ffi), numpy_pointer(mass,ffi) , numpy_pointer(density,ffi) ,numpy_pointer(layer_heat_capacity,ffi) ,numpy_pointer(o3,ffi), co2_mix_ratio, n2o_mix_ratio , ch4_mix_ratio , o2_mix_ratio , cos_zenith_angle , solar_irrad , l_grey_albedo, grey_albedo, l_rayleigh ,l_invert, numpy_pointer(sw_heating_rate,ffi), numpy_pointer(sw_flux_up,ffi), numpy_pointer(sw_flux_down,ffi)) 
+  runesdri.lib.runes_wrapper(n_profile ,n_layer , diag , spectrum_name , i_source , numpy_pointer(p_layer, ffi), numpy_pointer(t_layer,ffi), numpy_pointer(mass,ffi) , numpy_pointer(density,ffi) ,numpy_pointer(layer_heat_capacity,ffi) ,numpy_pointer(o3,ffi), co2_mix_ratio, n2o_mix_ratio , ch4_mix_ratio , o2_mix_ratio , cos_zenith_angle , solar_irrad , l_grey_albedo, grey_albedo, l_rayleigh ,l_invert, numpy_pointer(sw_heating_rate,ffi), numpy_pointer(sw_flux_up,ffi), numpy_pointer(sw_flux_down,ffi)) 
 
    print(“In python after call to runes_wrap trying to display heating rate, flux_up , flux_down to SW”)
    print((sw_heating_rate) 
@@ -74,7 +74,7 @@ def main():
    print(sw_flux_down)
 
 
-  runeslib.runes_wrap(n_profile ,n_layer , diag , spectrum_name , i_source , numpy_pointer(p_layer, ffi), numpy_pointer(t_layer,ffi) , numpy_pointer(mass,ffi) , numpy_pointer(density,ffi) ,numpy_pointer(layer_heat_capacity,ffi) ,numpy_pointer(o3,ffi), co2_mix_ratio , n2o_mix_ratio , ch4_mix_ratio ,o2_mix_ratio , cos_zenith_angle , solar_irrad , l_grey_albedo, grey_albedo, l_rayleigh , l_invert, numpy_pointer(lw_heating_rate,ffi), numpy_pointer(lw_flux_up,ffi),numpy_pointer(lw_flux_down,ffi))
+  runesdri.lib.runes_wrapper(n_profile ,n_layer , diag , spectrum_name , i_source , numpy_pointer(p_layer, ffi), numpy_pointer(t_layer,ffi) , numpy_pointer(mass,ffi) , numpy_pointer(density,ffi) ,numpy_pointer(layer_heat_capacity,ffi) ,numpy_pointer(o3,ffi), co2_mix_ratio , n2o_mix_ratio , ch4_mix_ratio ,o2_mix_ratio , cos_zenith_angle , solar_irrad , l_grey_albedo, grey_albedo, l_rayleigh , l_invert, numpy_pointer(lw_heating_rate,ffi), numpy_pointer(lw_flux_up,ffi),numpy_pointer(lw_flux_down,ffi))
 
 
    print(“In python after call to runes_wrap trying to display heating rate, flux_up , flux_down to LW”)
