@@ -1,18 +1,13 @@
 module runes_driverWrap
 
-  
-  use socrates_set_spectrum, only: set_spectrum
-  use socrates_runes, only: runes, StrDiag, &
-                            ip_source_illuminate, ip_source_thermal
-  use socrates_set_diag,      only: set_diag
-  use realtype_rd, only: RealK
-  use iso_c_binding, only: c_int, c_double
+  USE interface_core
+  use iso_c_binding
 
   
 
  contains
 
-  subroutine runes_wrap(n_profile, n_layer, diag ,spectrum_name , i_source, &
+  subroutine runes_wrapper(n_profile, n_layer, diag ,spectrum_name , i_source, &
     p_layer, t_layer, mass, density, layer_heat_capacity, h2o , o3 , co2_mix_ratio, &
     n2o_mix_ratio ,ch4_mix_ratio ,o2_mix_ratio ,cos_zenith_angle, solar_irrad, &
     l_grey_albedo, grey_albedo, l_rayleigh, l_invert, heating_rate, flux_up, flux_down) bind(c)
@@ -127,6 +122,6 @@ module runes_driverWrap
     grey_albedo = grey_albedo_lw, &
     l_invert = .false.)
 
-   end subroutine runes_wrap
+   end subroutine runes_wrapper
 
 end module runes_driverWrap
