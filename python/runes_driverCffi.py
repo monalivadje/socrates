@@ -8,7 +8,7 @@ Import runes.h
 from cffi import FFI
 from os.path import abspath
 
-runes_library_path = abspath('./librunes.a')
+runes_library_path = abspath('./libicore.a')
 runeslib = os.path.abspath(runes_library_path)
 desired_compiler = 'gcc'
 
