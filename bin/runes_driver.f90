@@ -1,11 +1,19 @@
 program runes_driver
 
-  use socrates_set_spectrum, only: set_spectrum
-  use socrates_runes, only: runes, StrDiag, &
-                            ip_source_illuminate, ip_source_thermal
-  use realtype_rd, only: RealK
+  USE interface_core
+  use runes_driverwrap
+  
+  Type StrDiag
+ 
+  integer :: n_profile 
+  integer :: n_layer 
+  
+  real(RealK), dimension(n_profile , n_layer ), pointer :: heating_rate(:, :)
+  real(RealK), dimension(n_profile , n_layer ), pointer :: flux_up(:,:)
+  real(RealK), dimension(n_profile , n_layer ), pointer :: flux_down(:,:)
+  
 
-  implicit none
+ END TYPE StrDiag 
 
   real(RealK), parameter :: grav_acc = 9.80665
   real(RealK), parameter :: r_gas_dry = 287.026
@@ -15,16 +23,16 @@ program runes_driver
 
   integer, parameter :: n_profile = 1
   integer, parameter :: n_layer = 32
-  type(StrDiag) :: sw_diag, lw_diag
-  real(RealK), target :: sw_heating_rate(n_profile, n_layer)
-  real(RealK), target :: lw_heating_rate(n_profile, n_layer)
-  real(RealK), target :: sw_flux_up(n_profile, 0:n_layer)
-  real(RealK), target :: sw_flux_down(n_profile, 0:n_layer)
-  real(RealK), target :: lw_flux_up(n_profile, 0:n_layer)
-  real(RealK), target :: lw_flux_down(n_profile, 0:n_layer)
+  type(StrDiag), pointer :: sw_diag, lw_diag
+  real(RealK), target :: sw_heating_rate(1, 32)
+  real(RealK), target :: lw_heating_rate(1, 32)
+  real(RealK), target :: sw_flux_up(1, 0:32)
+  real(RealK), target :: sw_flux_down(1, 0:32)
+  real(RealK), target :: lw_flux_up(1, 0:32)
+  real(RealK), target :: lw_flux_down(1, 0:32)
 
   ! Mid-latitude Summer McClatchey profile
-  real(RealK) :: p_layer(n_profile, n_layer) = reshape( (/ &
+  real(RealK) :: p_layer(1, 32) = reshape( (/ &
     0.337000E+01, 0.509050E+02, 0.135550E+03, 0.254500E+03, &
     0.492500E+03, 0.986000E+03, 0.204500E+04, 0.299500E+04, &
     0.349000E+04, 0.406500E+04, 0.473500E+04, 0.552500E+04, &
@@ -33,9 +41,9 @@ program runes_driver
     0.226000E+05, 0.262000E+05, 0.302500E+05, 0.348000E+05, &
     0.399000E+05, 0.456500E+05, 0.520500E+05, 0.591000E+05, &
     0.669000E+05, 0.756000E+05, 0.852000E+05, 0.957500E+05 /), &
-    (/ n_profile, n_layer /) )
+    (/ 1, 32 /) )
 
-  real(RealK) :: t_layer(n_profile, n_layer) = reshape( (/ &
+  real(RealK) :: t_layer(1, 32) = reshape( (/ &
     0.216982E+03, 0.262328E+03, 0.272545E+03, 0.263059E+03, &
     0.250428E+03, 0.238550E+03, 0.228094E+03, 0.223481E+03, &
     0.222481E+03, 0.220962E+03, 0.219481E+03, 0.218481E+03, &
@@ -44,9 +52,9 @@ program runes_driver
     0.225632E+03, 0.232109E+03, 0.238624E+03, 0.245104E+03, &
     0.251619E+03, 0.258100E+03, 0.264097E+03, 0.270094E+03, &
     0.276092E+03, 0.282091E+03, 0.287573E+03, 0.292058E+03 /), &
-    (/ n_profile, n_layer /) )
+    (/ 1, 32 /) )
 
-  real(RealK) :: p_level(n_profile, 0:n_layer) = reshape( (/ &
+  real(RealK) :: p_level(1, 0:32) = reshape( (/ &
     0.300000E-01, 0.671000E+01, 0.951000E+02, 0.176000E+03, &
     0.333000E+03, 0.652000E+03, 0.132000E+04, 0.277000E+04, &
     0.322000E+04, 0.376000E+04, 0.437000E+04, 0.510000E+04, &
@@ -55,9 +63,9 @@ program runes_driver
     0.209000E+05, 0.243000E+05, 0.281000E+05, 0.324000E+05, &
     0.372000E+05, 0.426000E+05, 0.487000E+05, 0.554000E+05, &
     0.628000E+05, 0.710000E+05, 0.802000E+05, 0.902000E+05, &
-    0.101300E+06 /), (/ n_profile, n_layer+1 /) )
+    0.101300E+06 /), (/ 1, 32+1 /) )
 
-  real(RealK) :: t_level(n_profile, 0:n_layer) = reshape( (/ &
+  real(RealK) :: t_level(1, 0:32) = reshape( (/ &
     0.210000E+03, 0.218000E+03, 0.276000E+03, 0.270000E+03, &
     0.258000E+03, 0.245000E+03, 0.234000E+03, 0.224000E+03, &
     0.223000E+03, 0.222000E+03, 0.220000E+03, 0.219000E+03, &
@@ -66,11 +74,11 @@ program runes_driver
     0.222000E+03, 0.229000E+03, 0.235000E+03, 0.242000E+03, &
     0.248000E+03, 0.255000E+03, 0.261000E+03, 0.267000E+03, &
     0.273000E+03, 0.279000E+03, 0.285000E+03, 0.290000E+03, &
-    0.294000E+03 /), (/ n_profile, n_layer+1 /) )
+    0.294000E+03 /), (/ 1, 32+1 /) )
 
-  real(RealK) :: t_ground(n_profile) = 294.0
+  real(RealK) :: t_ground(1) = 294.0
 
-  real(RealK) :: h2o(n_profile, n_layer) = reshape( (/ &
+  real(RealK) :: h2o(1, 32) = reshape( (/ &
     0.399688E-05, 0.399530E-05, 0.399851E-05, 0.399700E-05, &
     0.399963E-05, 0.400241E-05, 0.400722E-05, 0.400994E-05, &
     0.400705E-05, 0.400353E-05, 0.399929E-05, 0.399791E-05, &
@@ -79,9 +87,9 @@ program runes_driver
     0.349482E-04, 0.974304E-04, 0.199405E-03, 0.321272E-03, &
     0.509681E-03, 0.777969E-03, 0.114820E-02, 0.182544E-02, &
     0.305008E-02, 0.485372E-02, 0.722366E-02, 0.101064E-01 /), &
-    (/ n_profile, n_layer /) )
+    (/ 1, 32 /) )
 
-  real(RealK) :: o3(n_profile, n_layer) = reshape( (/ &
+  real(RealK) :: o3(1, 32) = reshape( (/ &
     0.606562E-06, 0.252165E-05, 0.469047E-05, 0.748127E-05, &
     0.957770E-05, 0.100812E-04, 0.814088E-05, 0.664711E-05, &
     0.603987E-05, 0.546986E-05, 0.480064E-05, 0.397211E-05, &
@@ -90,20 +98,20 @@ program runes_driver
     0.328720E-06, 0.252055E-06, 0.198937E-06, 0.166297E-06, &
     0.139094E-06, 0.116418E-06, 0.981116E-07, 0.850660E-07, &
     0.743462E-07, 0.649675E-07, 0.577062E-07, 0.520021E-07 /), &
-    (/ n_profile, n_layer /) )
+    (/ 1, 32 /) )
 
   real(RealK) :: co2_mix_ratio = 6.0e-4
   real(RealK) :: ch4_mix_ratio = 9.637e-7
   real(RealK) :: n2o_mix_ratio = 4.7255e-7
   real(RealK) :: o2_mix_ratio = 0.23139
 
-  real(RealK) :: cos_zenith_angle(n_profile) = cos(45.0*pi/180.0)
-  real(RealK) :: solar_irrad(n_profile) = 1361.0
+  real(RealK) :: cos_zenith_angle(1) = cos(45.0*pi/180.0)
+  real(RealK) :: solar_irrad(1) = 1361.0
   real(RealK) :: grey_albedo_sw = 0.06
   real(RealK) :: grey_albedo_lw = 0.0
 
-  real(RealK), dimension(n_profile, n_layer) :: d_mass, density
-  real(RealK), dimension(n_profile, n_layer) :: layer_heat_capacity
+  real(RealK), dimension(1, 32) :: d_mass, density
+  real(RealK), dimension(1, 32) :: layer_heat_capacity
 
   integer :: i, l
 
@@ -118,12 +126,12 @@ program runes_driver
   ! Read in spectral files at the beginning of a run
   call set_spectrum( &
     spectrum_name = 'sw', &
-    spectral_file = 'sp_sw_ga7', &
+    !spectral_file = 'sp_sw_ga7', &
     l_all_gases = .true. )
 
   call set_spectrum( &
     spectrum_name = 'lw', &
-    spectral_file = 'sp_lw_ga7', &
+    !spectral_file = 'sp_lw_ga7', &
     l_all_gases = .true. )
 
   ! SW call (clear-sky, Rayleigh scattering and gas absorption only)
@@ -133,7 +141,7 @@ program runes_driver
   call runes( &
     n_profile = n_profile, &
     n_layer = n_layer, &
-    diag = sw_diag, &
+   ! diag = sw_diag, &
     spectrum_name = 'sw', &
     i_source = ip_source_illuminate, &
     p_layer = p_layer, &
@@ -168,7 +176,7 @@ program runes_driver
   call runes( &
     n_profile = n_profile, &
     n_layer = n_layer, &
-    diag = lw_diag, &
+    !diag = lw_diag, &
     spectrum_name = 'lw', &
     i_source = ip_source_thermal, &
     p_layer = p_layer, &
