@@ -91,17 +91,17 @@ subroutine set_atmwrap( n_profile, n_layer, &
    cfc113_mix_ratio, hcfc22_mix_ratio, hfc134a_mix_ratio
   !   Well mixed mass mixing ratios
 
-  Logical, intent(in), optional :: &
+  Logical(C_BOOL), intent(in), optional :: &
    l_h2o_well_mixed, l_co2_well_mixed, l_o3_well_mixed, l_n2o_well_mixed, &
    l_ch4_well_mixed, l_o2_well_mixed, l_so2_well_mixed, l_n2_well_mixed, &
    l_cfc11_well_mixed, l_cfc12_well_mixed, l_cfc113_well_mixed, &
    l_hcfc22_well_mixed, l_hfc134a_well_mixed 
   !   Flag to use the well mixed ratios
 
-  Logical, intent(in), optional :: l_invert
+  Logical(C_BOOL), intent(in), optional :: l_invert
   !   Flag to invert fields in the vertical
 
-  Logical, intent(in), optional :: l_debug
+  Logical(C_BOOL), intent(in), optional :: l_debug
   integer, intent(in), optional :: i_profile_debug
   !   Options for outputting debugging information
 
