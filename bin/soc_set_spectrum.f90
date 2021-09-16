@@ -20,7 +20,7 @@ public :: set_spectrum, compress_spectrum, set_weight_blue, get_spectrum, &
           set_mcica, mcica_spectrum_name, mcica_data_array
 
 integer, parameter :: specnamelength = 64
-character(len=*), parameter :: ModuleName='SOCRATES_SET_SPECTRUM'
+character(len=*), parameter :: ModuleName='SOC_SET_SPECTRUM'
 
  contains
 
