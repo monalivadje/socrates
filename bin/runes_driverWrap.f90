@@ -20,6 +20,7 @@ module runes_driverWrap
 
   integer(C_INT), intent(in) :: n_profile 
   integer(C_INT), intent(in) :: n_layer 
+  character(C_CHAR), intent(in) :: spectrum_name
   type(StrDiag) :: sw_diag, lw_diag
 
   real(C_DOUBLE) :: heating_rate(n_profile, n_layer)
@@ -40,6 +41,8 @@ module runes_driverWrap
   real(C_DOUBLE) :: t_ground(n_profile) 
   real(C_DOUBLE), intent(in) :: h2o(n_profile, n_layer) 
   real(C_DOUBLE), intent(in) :: o3(n_profile, n_layer) 
+  real(C_DOUBLE), intent(in) :: i_source
+
 
   real(C_DOUBLE), intent(in), value :: co2_mix_ratio 
   real(C_DOUBLE), intent(in), value :: ch4_mix_ratio 
@@ -48,6 +51,7 @@ module runes_driverWrap
 
   real(C_DOUBLE), intent(in) :: cos_zenith_angle(n_profile) 
   real(C_DOUBLE), intent(in) :: solar_irrad(n_profile)
+  logical(C_BOOL), intent(in) ::  l_grey_albedo
   real(C_DOUBLE) :: grey_albedo_sw 
   real(C_DOUBLE) :: grey_albedo_lw 
 
