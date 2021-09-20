@@ -1,13 +1,14 @@
 
 # python interface to fortran module runes_driver using cffi
 
+import sys
 import numpy as np
-from constants_runes import grav_acc,r_gas_dry,cp_air_dry,pi,seconds_per_day , co2_mix_ratio , ch4_mix_ratio ,n2o_mix_ratio, o2_mix_ratio, n_profile, n_layer, t_ground,solar_irrad,grey_albedo_sw ,grey_albedo_lw 
+from constants_runes import grav_acc,r_gas_dry,cp_air_dry,pi,seconds_per_day , co2_mix_ratio , ch4_mix_ratio ,n2o_mix_ratio, o2_mix_ratio ,cos_zenith_angle ,n_profile, n_layer, t_ground,solar_irrad,grey_albedo_sw ,grey_albedo_lw 
 import cffi
 from cffi import FFI
 import runesdri
 
-
+ffi = cffi.FFI()
 def numpy_pointer(numpy_array,ffi):
     assert numpy_array.flags['F_CONTIGUOUS'], \
         "array is not contiguous in memory (Fortran order)"
@@ -15,9 +16,12 @@ def numpy_pointer(numpy_array,ffi):
 
 def main():
 
- ffi = cffi.FFI()
  ffibuilder = cffi.FFI()
- 
+
+spectrum_name = input('Enter spectrum name:\n')
+isource = input(" enter i_source value: ")
+i_source = float(isource)
+
   p_layer = np.asfortranarray([[0.337000E+01, 0.509050E+02, 0.135550E+03, 0.254500E+03],[0.492500E+03,0.986000E+03, 0.204500E+04, 0.299500E+04],[0.349000E+04, 0.406500E+04, 0.473500E+04, 0.552500E+04],[0.645000E+04, 0.753500E+04, 0.881000E+04, 0.103000E+05],[0.120500E+05, 0.141500E+05, 0.166000E+05, 0.194000E+05],[0.226000E+05, 0.262000E+05, 0.302500E+05,0.348000E+05],[0.399000E+05, 0.456500E+05, 0.520500E+05, 0.591000E+05],[0.669000E+05, 0.756000E+05, 0.852000E+05, 0.957500+05]], dtype=object)
      
 
@@ -35,6 +39,9 @@ def main():
 
   o3 = np.asfortranarray([[0.606562E-06, 0.252165E-05, 0.469047E-05, 0.748127E-05],[ 0.957770E-05, 0.100812E-04, 0.814088E-05, 0.664711E-05],[0.603987E-05, 0.546986E-05, 0.480064E-05, 0.397211E-05],[0.319003E-05, 0.246208E-05,0.181795E-05, 0.135296E-05],[0.102925E-05, 0.808670E-06, 0.612577E-06, 0.434212E-06],[0.328720E-06, 0.252055E-06, 0.198937E-06,0.166297E-06], [0.139094E-06, 0.116418E-06, 0.981116E-07, 0.850660E-07],[0.743462E-07, 0.649675E-07, 0.577062E-07,  0.520021E-07]], dtype=object) 
 
+  l_grey_albedo= bool(input(" enter l_grey_albedo value: \n"))
+  l_rayleigh = bool(input(" enter l_rayleigh value: \n"))
+  l_invert = bool(input(" enter l_invert value: \n"))
   shape = p_layer.shape
   mass = np.empty(shape, dtype=float, order="F")
   density = np.empty(shape, dtype=float, order="F")
