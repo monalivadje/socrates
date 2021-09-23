@@ -5,7 +5,7 @@ module runes_driverWrap
 
  contains
 
-  subroutine runes_wrapper(n_profile, n_layer, spectrum_name , i_source, &
+  subroutine runes_wrapper(n_profile, n_layer, i_source, &
     p_layer, t_layer, mass, density, layer_heat_capacity, h2o , o3 , co2_mix_ratio, &
     n2o_mix_ratio ,ch4_mix_ratio ,o2_mix_ratio ,cos_zenith_angle, solar_irrad, &
     l_grey_albedo, grey_albedo, l_rayleigh, l_invert, heating_rate, flux_up, flux_down) bind(c)
@@ -41,7 +41,7 @@ module runes_driverWrap
   real(C_DOUBLE) :: t_ground(n_profile) 
   real(C_DOUBLE), intent(in) :: h2o(n_profile, n_layer) 
   real(C_DOUBLE), intent(in) :: o3(n_profile, n_layer) 
-  real(C_DOUBLE), intent(in) :: i_source
+  real(C_INT), intent(in) :: i_source
 
 
   real(C_DOUBLE), intent(in), value :: co2_mix_ratio 
@@ -61,12 +61,12 @@ module runes_driverWrap
 
   ! Read in spectral files at the beginning of a run
   call set_spectrum( &
-   spectrum_name = 'sw', &
+   !spectrum_name = 'sw', &
     !spectral_file='sp_sw_ga7', &
     l_all_gases = .true. )
 
   call set_spectrum( &
-    spectrum_name = 'lw', &
+    !spectrum_name = 'lw', &
     !spectral_file='sp_lw_ga7' , &
     l_all_gases = .true. )
 
@@ -79,7 +79,7 @@ module runes_driverWrap
     n_profile = n_profile, &
     n_layer = n_layer, &
     !diag = sw_diag, &
-    spectrum_name = 'sw', &
+    !spectrum_name = 'sw', &
     i_source = ip_source_illuminate, &
     p_layer = p_layer, &
     t_layer = t_layer, &
@@ -108,7 +108,7 @@ module runes_driverWrap
     n_profile = n_profile, &
     n_layer = n_layer, &
     !diag = lw_diag, &
-    spectrum_name = 'lw', &
+    !spectrum_name = 'lw', &
     i_source = ip_source_thermal, &
     p_layer = p_layer, &
     t_layer = t_layer, &
