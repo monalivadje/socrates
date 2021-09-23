@@ -12,13 +12,13 @@ ffi = cffi.FFI()
 def numpy_pointer(numpy_array,ffi):
     assert numpy_array.flags['F_CONTIGUOUS'], \
         "array is not contiguous in memory (Fortran order)"
-    return ffi.cast("double*", numpy_array.__array_interface__['data'][0])
+    return ffi.cast("float*", numpy_array.__array_interface__['data'][0])
 
 def main():
 
  ffibuilder = cffi.FFI()
 
-spectrum_name = input('Enter spectrum name:\n')
+#spectrum_name = input('Enter spectrum name:\n')
 isource = input(" enter i_source value: ")
 i_source = float(isource)
 
@@ -54,14 +54,14 @@ i_source = float(isource)
   lw_flux_up = np.empty((n_profile, n_layer+1), dtype=float, order="F")
   lw_flux_down = np.empty((n_profile, n_layer+1), dtype=float, order="F")
 
-  runesdri.lib.runes_wrapper(n_profile ,n_layer , spectrum_name , i_source , numpy_pointer(p_layer, ffi), numpy_pointer(t_layer,ffi), numpy_pointer(mass,ffi) , numpy_pointer(density,ffi) ,numpy_pointer(layer_heat_capacity,ffi) ,numpy_pointer(h2o,ffi), numpy_pointer(o3,ffi), co2_mix_ratio, n2o_mix_ratio , ch4_mix_ratio , o2_mix_ratio , cos_zenith_angle , solar_irrad , l_grey_albedo, grey_albedo, l_rayleigh ,l_invert, numpy_pointer(sw_heating_rate,ffi), numpy_pointer(sw_flux_up,ffi), numpy_pointer(sw_flux_down,ffi)) 
+  runesdri.lib.runes_wrapper(n_profile ,n_layer ,i_source , numpy_pointer(p_layer, ffi), numpy_pointer(t_layer,ffi), numpy_pointer(mass,ffi) , numpy_pointer(density,ffi) ,numpy_pointer(layer_heat_capacity,ffi) ,numpy_pointer(h2o,ffi), numpy_pointer(o3,ffi), co2_mix_ratio, n2o_mix_ratio , ch4_mix_ratio , o2_mix_ratio , cos_zenith_angle , solar_irrad , l_grey_albedo, grey_albedo, l_rayleigh ,l_invert, numpy_pointer(sw_heating_rate,ffi), numpy_pointer(sw_flux_up,ffi), numpy_pointer(sw_flux_down,ffi)) 
 
    print("in python after call to runes_wrap trying to display heating rate, flux_up , flux_down to SW")
    print(sw_heating_rate) 
    print(sw_flux_up) 
    print(sw_flux_down)
 
-  runesdri.lib.runes_wrapper(n_profile ,n_layer , spectrum_name , i_source , numpy_pointer(p_layer, ffi), numpy_pointer(t_layer,ffi) , numpy_pointer(mass,ffi) , numpy_pointer(density,ffi) ,numpy_pointer(layer_heat_capacity,ffi) , numpy_pointer(h2o,ffi), numpy_pointer(o3,ffi), co2_mix_ratio , n2o_mix_ratio , ch4_mix_ratio ,o2_mix_ratio , cos_zenith_angle , solar_irrad , l_grey_albedo, grey_albedo, l_rayleigh , l_invert, numpy_pointer(lw_heating_rate,ffi), numpy_pointer(lw_flux_up,ffi),numpy_pointer(lw_flux_down,ffi))
+  runesdri.lib.runes_wrapper(n_profile ,n_layer , i_source , numpy_pointer(p_layer, ffi), numpy_pointer(t_layer,ffi) , numpy_pointer(mass,ffi) , numpy_pointer(density,ffi) ,numpy_pointer(layer_heat_capacity,ffi) , numpy_pointer(h2o,ffi), numpy_pointer(o3,ffi), co2_mix_ratio , n2o_mix_ratio , ch4_mix_ratio ,o2_mix_ratio , cos_zenith_angle , solar_irrad , l_grey_albedo, grey_albedo, l_rayleigh , l_invert, numpy_pointer(lw_heating_rate,ffi), numpy_pointer(lw_flux_up,ffi),numpy_pointer(lw_flux_down,ffi))
 
 
    print("in python after call to runes_wrap trying to display heating rate, flux_up , flux_down to LW")
@@ -70,6 +70,6 @@ i_source = float(isource)
    print(lw_flux_down)
    
 if __name__ == "__main__":
-   ffibuilder.compile()
+   ffibuilder.compile(verbose=True)
     main()
     
