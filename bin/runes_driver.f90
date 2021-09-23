@@ -125,12 +125,12 @@ program runes_driver
 
   ! Read in spectral files at the beginning of a run
   call set_spectrum( &
-    spectrum_name = 'sw', &
+    !spectrum_name = 'sw', &
     !spectral_file = 'sp_sw_ga7', &
     l_all_gases = .true. )
 
   call set_spectrum( &
-    spectrum_name = 'lw', &
+    !spectrum_name = 'lw', &
     !spectral_file = 'sp_lw_ga7', &
     l_all_gases = .true. )
 
@@ -142,7 +142,7 @@ program runes_driver
     n_profile = n_profile, &
     n_layer = n_layer, &
    ! diag = sw_diag, &
-    spectrum_name = 'sw', &
+    !spectrum_name = 'sw', &
     i_source = ip_source_illuminate, &
     p_layer = p_layer, &
     t_layer = t_layer, &
@@ -177,7 +177,7 @@ program runes_driver
     n_profile = n_profile, &
     n_layer = n_layer, &
     !diag = lw_diag, &
-    spectrum_name = 'lw', &
+    !spectrum_name = 'lw', &
     i_source = ip_source_thermal, &
     p_layer = p_layer, &
     t_layer = t_layer, &
