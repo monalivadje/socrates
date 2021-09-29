@@ -11,7 +11,8 @@ Contents:
 5) Tested compilers
 
 
-1) What's included? -
+1. What's included? 
+_____________________________
 
   bin/ contains the wrapper code in Fortran 95 (.f90).
 
@@ -22,7 +23,8 @@ Contents:
   also .c header file
 
 
-2) Compiling the source code externally -
+2. Compiling the source code externally 
+_________________________________________
 
   For external users it should only be necessary to edit the file
   make/Mk_cmd to allow compilation of the code on your system. FORTCOMP
@@ -39,7 +41,8 @@ Contents:
 
 
 
-3) Compilation of scripts in bin -
+3. Compilation of scripts in bin 
+___________________________________
 
   There are a wrapper code in bin/ which are written 
   in fortran and are compiled by.
@@ -52,8 +55,8 @@ Contents:
 
 
 
-
-4) Compilation of scripts in python -
+4. Compilation of scripts in python 
+______________________________________
 
 
   There are a python code in python/ which is interface to 
@@ -65,7 +68,8 @@ Contents:
 
 
 
-5) Tested compilers -
+5. Tested compilers 
+_______________________
 
 
    The full suite has been tested with the following compilers:
@@ -76,6 +80,6 @@ Contents:
 
    To use these compilers within the Met Office run, respectively:
    
-  ./build_code ifort
+     ./build_code ifort
 
-  ./build_code gfortran
+     ./build_code gfortran
