@@ -1,4 +1,5 @@
 SOCRATES
+
 Suite Of Community RAdiative Transfer codes based on Edwards and Slingo
 -----------------------------------------------------------------------
 
@@ -17,7 +18,7 @@ Contents:
 
 
 
-1) What's included?
+1. What's included?
 -------------------
 
 
@@ -31,7 +32,7 @@ also .c header file
 
 
 
-2) Compiling the source code externally
+2. Compiling the source code externally
 ---------------------------------------
 
 For external users it should only be necessary to edit the file
@@ -48,7 +49,7 @@ your path to the executables and man pages:
 
 
 
-3) Compilation of scripts in bin
+3. Compilation of scripts in bin
 ---------------------------------
 
 There are a wrapper code in bin/ which are written 
@@ -61,7 +62,7 @@ ar -rcs libicore.a runes_driver.o runes_driverwrap.o
 
 
 
-4) Compilation of scripts in python
+4. Compilation of scripts in python
 ------------------------------------
 
 There are a python code in python/ which is interface to 
@@ -72,7 +73,7 @@ python3 runes_driverCffi.py
 
 
 
-5) Tested compilers
+5. Tested compilers
 -------------------
 
 The full suite has been tested with the following compilers:
