@@ -54,6 +54,11 @@ i_source = int(isource)
   lw_flux_up = np.empty((n_profile, n_layer+1), dtype=float, order="F")
   lw_flux_down = np.empty((n_profile, n_layer+1), dtype=float, order="F")
 
+  print("sw_heating_rate:",sw_heating_rate)
+  print("lw_heating_rate:",lw_heating_rate)
+  print("sw_flux_up:",sw_flux_up)
+  print("sw_flux_down:",sw_flux_down)
+
   runesdri.lib.runes_wrapper(n_profile ,n_layer ,i_source , numpy_pointer(p_layer, ffi), numpy_pointer(t_layer,ffi), numpy_pointer(mass,ffi) , numpy_pointer(density,ffi) ,numpy_pointer(layer_heat_capacity,ffi) ,numpy_pointer(h2o,ffi), numpy_pointer(o3,ffi), co2_mix_ratio, n2o_mix_ratio , ch4_mix_ratio , o2_mix_ratio , cos_zenith_angle , solar_irrad , l_grey_albedo, grey_albedo, l_rayleigh ,l_invert, numpy_pointer(sw_heating_rate,ffi), numpy_pointer(sw_flux_up,ffi), numpy_pointer(sw_flux_down,ffi)) 
 
    print("in python after call to runes_wrap trying to display heating rate, flux_up , flux_down to SW")
