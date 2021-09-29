@@ -14,6 +14,9 @@ Contents:
 
 
 
+
+
+
 1) What's included?
 -------------------
 
@@ -25,6 +28,7 @@ files.
 
 python/ contains python code which is interface to fortran using cffi and 
 also .c header file
+
 
 
 2) Compiling the source code externally
@@ -43,6 +47,7 @@ your path to the executables and man pages:
 . ./set_rad_env
 
 
+
 3) Compilation of scripts in bin
 ---------------------------------
 
@@ -54,6 +59,8 @@ gfortran -c -fPIC runes_driverwrap.f90 -o runes_driverwrap.o
 ar -rcs libicore.a runes_driver.o runes_driverwrap.o
 
 
+
+
 4) Compilation of scripts in python
 ------------------------------------
 
@@ -62,6 +69,7 @@ fortran using cffi and are compiled by.
 
 python3 runes_driverpy.py
 python3 runes_driverCffi.py
+
 
 
 5) Tested compilers
