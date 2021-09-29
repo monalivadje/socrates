@@ -11,20 +11,20 @@ Contents:
 5) Tested compilers
 
 
-1. What's included? 
+1. What's included? -
 _____________________________
 
-  bin/ contains the wrapper code in Fortran 95 (.f90).
+   bin/ contains the wrapper code in Fortran 95 (.f90).
 
-  make/ contains the Makefile which then accesses the various Mk_*
-  files.
+   make/ contains the Makefile which then accesses the various Mk_*
+   files.
 
-  python/ contains python code which is interface to fortran using cffi and 
-  also .c header file
+   python/ contains python code which is interface to fortran using cffi and 
+   also .c header file
 
 
-2. Compiling the source code externally 
-_________________________________________
+2. Compiling the source code externally -
+__________________________________________
 
   For external users it should only be necessary to edit the file
   make/Mk_cmd to allow compilation of the code on your system. FORTCOMP
@@ -41,34 +41,34 @@ _________________________________________
 
 
 
-3. Compilation of scripts in bin 
+3. Compilation of scripts in bin -
 ___________________________________
 
   There are a wrapper code in bin/ which are written 
   in fortran and are compiled by.
 
-  gfortran -c -fPIC runes_driver.f90 -o runes_driver.o
+   gfortran -c -fPIC runes_driver.f90 -o runes_driver.o
   
-  gfortran -c -fPIC runes_driverwrap.f90 -o runes_driverwrap.o
+   gfortran -c -fPIC runes_driverwrap.f90 -o runes_driverwrap.o
   
-  ar -rcs libicore.a runes_driver.o runes_driverwrap.o
+   ar -rcs libicore.a runes_driver.o runes_driverwrap.o
 
 
 
-4. Compilation of scripts in python 
+4. Compilation of scripts in python -
 ______________________________________
 
 
   There are a python code in python/ which is interface to 
   fortran using cffi and are compiled by.
 
-  python3 runes_driverpy.py
+   python3 runes_driverpy.py
 
-  python3 runes_driverCffi.py
+   python3 runes_driverCffi.py
 
 
 
-5. Tested compilers 
+5. Tested compilers -
 _______________________
 
 
